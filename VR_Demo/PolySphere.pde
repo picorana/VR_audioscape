@@ -7,8 +7,9 @@ class PolySphere{
   
   public PolySphere(int radius, String type){
     if (type=="pyramid") {
-      s = createBasePyramid(20, 10);
-      division = PI/(360/20) + 0.05;
+      int size = 50;
+      s = createBasePyramid(size, 30);
+      division = PI/(360/size) - 0.25;
     }
     if (type=="spike") {
       int size = 10;
