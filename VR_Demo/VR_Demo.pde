@@ -14,13 +14,12 @@ void setup(){
   o2 = new PolySphere(50, "spike");
   //cam = new QueasyCam(this);
   
-  //camera(100, 0, 0, 0, 0, 0, 0.0, 1.0, 0.0);
+  
   
 }
 
 void draw(){
   background(50);
-  smooth();
   translate(width/2, height/2, 100);
   pushMatrix();
   rotateY(millis()/1000.0);

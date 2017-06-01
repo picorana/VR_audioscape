@@ -56,6 +56,7 @@ class PolySphere{
     s.beginShape();
     s.fill(50);
     s.stroke(255);
+    //s.noStroke();
     s.vertex(-l, -l, -h);
     s.vertex( l, -l, -h);
     s.vertex( 0, 0, h);
