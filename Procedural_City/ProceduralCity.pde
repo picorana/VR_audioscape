@@ -7,7 +7,9 @@ class ProceduralCity{
     r = new Road();
     buildings = new ArrayList();
     for (int i=0; i<num_buildings; i++){
-      buildings.add(new Building(i*6, 0, 0));
+      for (int j=0; j<num_buildings; j++){
+        buildings.add(new Building(i*10, 0, j*10));
+      }
     }
   }
   
