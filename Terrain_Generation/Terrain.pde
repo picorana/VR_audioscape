@@ -2,9 +2,9 @@ class Terrain{
   
   float noiseScale = 0.008;
   float y_scale = 200;
-  int terrain_length = 200, tile_length = 4;
-  int strips_num = 10;
-  int strips_length = 20;
+  int terrain_length = 250, tile_length = 5;
+  int strips_num = 5;
+  int strips_length = 50;
   int water_level = -75;
   int strip_counter = 0;
   ArrayList<PShape> strips = new ArrayList();
@@ -27,18 +27,19 @@ class Terrain{
     }
     popMatrix();
     
+    /*
     pushMatrix();
-    translate(0, 0, -200*tile_length);
+    translate(0, 0, -terrain_length*tile_length);
     shape(water, 0, 0);
-    popMatrix();
+    popMatrix();*/
   }
   
   void update(){
-    if (frameCount%5==0){
+    /*if (frameCount%2==0){
       strips.remove(0);
       strips.add(createTerrainStrip(strip_counter*strips_length, strips_length));
       strip_counter++;
-    }
+    }*/
   }
   
   PShape createTerrainStrip(int index, int strips_length){

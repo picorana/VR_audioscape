@@ -1,12 +1,14 @@
-import queasycam.*;
+//import queasycam.*;
 import java.util.*;
+import processing.vr.*;
 
-QueasyCam cam;
+//QueasyCam cam;
 Terrain t;
 
 void setup(){
-  size(600, 600, P3D);
-  cam = new QueasyCam(this);
+  //size(600, 600, P3D);
+  //cam = new QueasyCam(this);
+  fullScreen(STEREO);
   t = new Terrain();
 }
 
@@ -15,9 +17,11 @@ void draw() {
   lights();
   ambientLight(102, 102, 102);
  
-  translate(-200, 500, -200);
+  translate(0, 1000, 1000);
   t.display();
   t.update();
+  
+  println(frameRate);
 }
 
 void mouseClicked(){
