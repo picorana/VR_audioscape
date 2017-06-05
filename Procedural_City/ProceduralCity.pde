@@ -1,7 +1,7 @@
 class ProceduralCity{
   ArrayList<Building> buildings;
   Road r;
-  int num_buildings = 10;
+  int num_buildings = 2;
   
   public ProceduralCity(){
     r = new Road();

@@ -11,6 +11,8 @@ class Building{
   Contour contour;
   ContourScale conScale;
   
+  PShape s;
+  
   public Building(int posx, int posy, int posz){
     this.posx = posx; this.posy = posy; this.posz = posz;
     
@@ -18,6 +20,9 @@ class Building{
     size = 3;
     
     e = createBuildingStructure();
+    
+    s=loadShape("pixelartmodels/building1.obj");
+    s.setTexture(loadImage("pixelartmodels/building1.png"));
   }
   
   Extrusion createBuildingStructure(){
@@ -98,17 +103,10 @@ class Building{
     pushMatrix();
     translate(posx, posy, posz);
     rotateX(PI);
-    e.draw();
+    //e.draw();
+    shape(s, 0, 0);
     popMatrix();
-    
-    pushMatrix();
-    textSize(32);
-    textMode(CENTER);
-    translate(posx-size/2, posy-5, posz+size+1);
-    scale(.05);
-    
-    text("word", 0, 0);
-    popMatrix();
+   
   }
 }
 
