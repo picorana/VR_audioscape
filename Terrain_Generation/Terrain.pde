@@ -2,16 +2,18 @@ class Terrain{
   
   float noiseScale = 0.008;
   float y_scale = 200;
-  int terrain_length = 250, tile_length = 5;
+  int terrain_length = 250, tile_length = 7;
   int strips_num = 5;
   int strips_length = 50;
-  int water_level = -75;
+  int water_level = 0;  // it was -75
   int strip_counter = 0;
   ArrayList<PShape> strips = new ArrayList();
   PShape water;
+  PShape planeUnderneath;
   
   public Terrain(){
     water = createWater();
+    planeUnderneath = createPlaneUnderneath();
     for (int i=0; i<strips_num; i++){
       strips.add(createTerrainStrip(i*strips_length, strips_length));
       strip_counter++;
@@ -19,7 +21,7 @@ class Terrain{
   }
   
   void display(){
-    
+    // terrain strips
     pushMatrix();
     translate(0, 0, -strip_counter*tile_length*strips_length);
     for (int i=0; i<strips.size(); i++){
@@ -27,18 +29,20 @@ class Terrain{
     }
     popMatrix();
     
-    /*
+    // other planes that need to move together with the terrain
     pushMatrix();
     translate(0, 0, -terrain_length*tile_length);
-    shape(water, 0, 0);
-    popMatrix();*/
+    shape(planeUnderneath);
+    popMatrix();
   }
   
   void update(){
-    /*if (frameCount%2==0){
+    /*
+   if ((terrain_offset/tile_length)%50>2){
       strips.remove(0);
       strips.add(createTerrainStrip(strip_counter*strips_length, strips_length));
       strip_counter++;
+      terrain_offset = 0;
     }*/
   }
   
@@ -72,6 +76,19 @@ class Terrain{
     }
     
     return s;
+  }
+  
+  PShape createPlaneUnderneath(){
+    PShape water_rect = createShape();
+    water_rect.beginShape();
+    water_rect.fill(color(50, 102, 153));
+    water_rect.noStroke();
+    water_rect.vertex(0, water_level + 20, 0);
+    water_rect.vertex(terrain_length*tile_length, water_level + 20, 0);
+    water_rect.vertex(terrain_length*tile_length, water_level + 20, terrain_length*tile_length);
+    water_rect.vertex(0, water_level + 20, terrain_length*tile_length);
+    water_rect.endShape(CLOSE);
+    return water_rect;
   }
   
   PShape createWater(){

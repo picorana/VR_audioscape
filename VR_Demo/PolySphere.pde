@@ -7,7 +7,7 @@ class PolySphere{
   
   public PolySphere(int radius, String type){
     if (type=="pyramid") {
-      int size = 50;
+      int size = 60;
       s = createBasePyramid(size, 30);
       division = PI/(360/size) - 0.25;
     }
@@ -29,7 +29,6 @@ class PolySphere{
         translate(radius*sin(i)*cos(j), -radius*cos(i), radius*sin(i)*sin(j));
         rotateY(PI/2-j);
         rotateX(PI/2-i);
-        
         shape(s, 0, 0);
         popMatrix();
       }
@@ -44,8 +43,7 @@ class PolySphere{
     s.scale(size);
     s.setStroke(true);
     s.setStroke(color(255, 255, 255));
-    s.setStrokeWeight(0.1);        
-                                               
+    s.setStrokeWeight(0.1);                                            
     s.setFill(color(50, 50, 50));
     return s;
   }
@@ -54,9 +52,10 @@ class PolySphere{
     PShape s = createShape();
     
     s.beginShape();
+    
     s.fill(50);
     s.stroke(255);
-    //s.noStroke();
+
     s.vertex(-l, -l, -h);
     s.vertex( l, -l, -h);
     s.vertex( 0, 0, h);

@@ -17,7 +17,7 @@ void draw() {
   lights();
   ambientLight(102, 102, 102);
  
-  translate(0, 1000, 1000);
+  translate(0, 900, 1000);
   t.display();
   t.update();
   

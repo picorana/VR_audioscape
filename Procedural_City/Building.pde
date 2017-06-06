@@ -1,6 +1,7 @@
 class Building{
   
   int posx, posy, posz;
+  int type = 1;
   float building_height;
   float size;
   
@@ -16,13 +17,12 @@ class Building{
   public Building(int posx, int posy, int posz){
     this.posx = posx; this.posy = posy; this.posz = posz;
     
-    building_height = random(10, 15);
-    size = 3;
+    if (random(0, 1)<.9) building_height = random(10, 20)*5;
+    else building_height = random(20, 40)*5;
+    size = 3*5;
     
     e = createBuildingStructure();
     
-    s=loadShape("pixelartmodels/building1.obj");
-    s.setTexture(loadImage("pixelartmodels/building1.png"));
   }
   
   Extrusion createBuildingStructure(){
@@ -47,14 +47,6 @@ class Building{
   }
   
   public Contour getBuildingContour() {
-    /*PVector[] c = new PVector[] {
-      new PVector(-3, 3), 
-      new PVector(3, 3), 
-      new PVector(5, 1), 
-      new PVector(1, -3), 
-      new PVector(-1, -3), 
-      new PVector(-5, 1)
-      };*/
       PVector[] c = new PVector[]{
         new PVector(-size, size),
         new PVector(size, size),
@@ -65,34 +57,20 @@ class Building{
   }
   
   PImage createTexture(){
-    int resolution = 10;
-    int type = round(random(0, 1));
+    float resolution = 0.5;
     
-    PImage img = createImage((int)size*resolution*4, (int)(building_height*resolution), ARGB);
+    PImage img = createImage((int)(size*resolution*4), (int)(building_height*resolution), ARGB);
 
     img.loadPixels();
 
-    switch(type){
-      case 0:
-      for (int x=0; x<img.width; x++){
-        for (int y=0; y<img.height; y++){
-          int i = (int)(x+y*img.width);
-          if (y%10==0) img.pixels[i] = color(200, 200+y, 200+y);
-          else img.pixels[i] = color(50, 50+y, 50+ y);
-        }
-      }
-      
-      case 1:
-      for (int x=0; x<img.width; x++){
-        for (int y=0; y<img.height; y++){
-          int i = (int)(x+y*img.width);
-          if (y%10==0 || x%10==0) img.pixels[i] = color(200, 200+y, 200+y);
-          else img.pixels[i] = color(50, 50+y, 50+ y);
-        }
+    for (int x=0; x<img.width; x++){
+      for (int y=0; y<img.height; y++){
+        int i = (int)(x+y*img.width);
+        if (y%5==0) img.pixels[i] = color(200, 200+y, 200+y);
+        else img.pixels[i] = color(50, 50+y, 50+ y);
       }
     }
-    
-    
+
     img.updatePixels();
     return img;
   }
@@ -103,15 +81,13 @@ class Building{
     pushMatrix();
     translate(posx, posy, posz);
     rotateX(PI);
-    //e.draw();
-    shape(s, 0, 0);
+    e.draw();
     popMatrix();
    
   }
 }
 
 public class Building_Contour extends Contour {
-
   public Building_Contour(PVector[] c) {
     this.contour = c;
   }
