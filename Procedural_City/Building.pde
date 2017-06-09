@@ -7,6 +7,8 @@ class Building{
   
   int res = 100;
   
+  int chunkType = 0;
+  
   Extrusion e;
   Path path;
   Contour contour;
@@ -17,9 +19,21 @@ class Building{
   public Building(int posx, int posy, int posz){
     this.posx = posx; this.posy = posy; this.posz = posz;
     
-    if (random(0, 1)<.9) building_height = random(10, 20)*5;
-    else building_height = random(20, 40)*5;
-    size = 3*5;
+    if (random(0, 1)<.9) building_height = random(10, 20)*10;
+    else building_height = random(20, 40)*10;
+    size = 3*10;
+    
+    e = createBuildingStructure();
+    
+  }
+  
+  // this other constructor serves only for chunktype -- remove it
+  public Building(int posx, int posy, int posz, int chunkType){
+    this.posx = posx; this.posy = posy; this.posz = posz; this.chunkType = chunkType;
+    
+    if (random(0, 1)<.9) building_height = random(10, 20)*10;
+    else building_height = random(20, 40)*10;
+    size = 3*10;
     
     e = createBuildingStructure();
     
@@ -37,7 +51,7 @@ class Building{
     // Create the extrusion
     e = new Extrusion(sketchPApplet, path, 1, contour, conScale);
     
-    e.setTexture(createTexture(), 1, 1);
+    e.setTexture(textures.get(chunkType), 1, 1);
     e.drawMode(S3D.TEXTURE );
     // Extrusion end caps
     //e.setTexture("grass.jpg", S3D.E_CAP);
@@ -56,24 +70,7 @@ class Building{
       return new Building_Contour(c);
   }
   
-  PImage createTexture(){
-    float resolution = 0.5;
-    
-    PImage img = createImage((int)(size*resolution*4), (int)(building_height*resolution), ARGB);
-
-    img.loadPixels();
-
-    for (int x=0; x<img.width; x++){
-      for (int y=0; y<img.height; y++){
-        int i = (int)(x+y*img.width);
-        if (y%5==0) img.pixels[i] = color(200, 200+y, 200+y);
-        else img.pixels[i] = color(50, 50+y, 50+ y);
-      }
-    }
-
-    img.updatePixels();
-    return img;
-  }
+  
   
   void update(){}
   

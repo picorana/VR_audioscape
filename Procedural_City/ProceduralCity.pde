@@ -1,17 +1,16 @@
 class ProceduralCity{
   
   ArrayList<Chunk> chunks;
-  int numChunks = 3;
-  
-  ArrayList<Building> buildings;
 
-  int num_buildings = 15;
+  int numChunks = 4;
+  int num_buildings = 20;
+  int lastRow = numChunks/2 - 1;
   
   public ProceduralCity(){
 
     chunks = new ArrayList();
-    for(int i=0; i<numChunks; i++){
-      for (int j=0; j<numChunks; j++){
+    for(int i=-numChunks/2; i<numChunks/2; i++){
+      for (int j=-numChunks/2; j<numChunks/2; j++){
         chunks.add(new Chunk(new PVector(i, j)));
       }
     }
@@ -29,6 +28,18 @@ class ProceduralCity{
     }
     
     popMatrix();
+  }
+  
+  void addChunks(){
+    lastRow++;
+    for (int i=-numChunks/2; i<numChunks/2; i++){
+      chunks.add(new Chunk(new PVector(i, lastRow)));
+    }
+    
+    for (int i=0; i<chunks.size(); i++){
+      println(chunks.get(i).chunkPosition);
+      if(chunks.get(i).chunkPosition.y <= (lastRow-numChunks)) chunks.remove(chunks.get(i));
+    }
   }
   
 }
