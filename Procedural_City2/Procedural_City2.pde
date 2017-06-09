@@ -8,7 +8,7 @@ import processing.opengl.*;
 
 //QueasyCam cam;
 ProceduralCity pc;
-Reference_axes ref;
+ReferenceAxes ref;
 
 PApplet sketchPApplet;
 
@@ -22,7 +22,7 @@ void setup(){
   fullScreen(STEREO);
   
   //cam = new QueasyCam(this);
-  ref = new Reference_axes();
+  ref = new ReferenceAxes();
   
   s1 = loadShape("building1.obj");
   s1.setTexture(loadImage("building1.png"));
@@ -43,20 +43,23 @@ void draw(){
   background(0);
   lights();
   ambientLight(255, 255, 255);
-  translate(((PGraphicsOpenGL)sketchPApplet.g).cameraX, ((PGraphicsOpenGL)sketchPApplet.g).cameraY + 1000, ((PGraphicsOpenGL)sketchPApplet.g).cameraZ);
+  translate(((PGraphicsOpenGL)sketchPApplet.g).cameraX, ((PGraphicsOpenGL)sketchPApplet.g).cameraY + 50, ((PGraphicsOpenGL)sketchPApplet.g).cameraZ);
   
   pushMatrix();
   rotateX(PI);
   //translate(520, -650, -200);
-  translate(500, 0, 0);
+  translate(200, 0, 0);
   shape(s1, 0, 0);
   popMatrix();
   
   pushMatrix();
   rotateX(PI);
+  //rotateY(PI);
+  translate(0, 0, 300);
+  s2.rotateY(PI);
+  s2.rotateY(PI);
   //translate(520, -650, -430);
-  translate(0, 0, 500);
-  shape(s2, 0, 0);
+  shape(s2);
   popMatrix();
 
   ref.display();
