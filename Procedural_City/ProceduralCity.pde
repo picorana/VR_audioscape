@@ -2,16 +2,20 @@ class ProceduralCity{
   
   ArrayList<Chunk> chunks;
 
-  int numChunks = 4;
-  int num_buildings = 20;
-  int lastRow = numChunks/2 - 1;
+  int numChunks = 3;
+  int numBuildings = 9;
+  int buildingSpacing = 150;
   
-  public ProceduralCity(){
+  int lastRow = numChunks - 1;
+  
+  public ProceduralCity(int numChunks, int numBuildings, int buildingSpacing){
+    this.numChunks = numChunks; this.numBuildings = numBuildings; this.buildingSpacing = buildingSpacing;
 
     chunks = new ArrayList();
-    for(int i=-numChunks/2; i<numChunks/2; i++){
-      for (int j=-numChunks/2; j<numChunks/2; j++){
-        chunks.add(new Chunk(new PVector(i, j)));
+    for(int i=0; i<numChunks; i++){
+      for (int j=0; j<numChunks; j++){
+        if (i!=numChunks/2) chunks.add(new Chunk(new PVector(i, j), numBuildings, buildingSpacing));
+        else chunks.add(new Chunk(new PVector(i, j), new String[][]{{"b", "b", "b"}, {"r", "r", "r"}, {"b", "b", "b"}}, buildingSpacing));
       }
     }
     
@@ -32,8 +36,9 @@ class ProceduralCity{
   
   void addChunks(){
     lastRow++;
-    for (int i=-numChunks/2; i<numChunks/2; i++){
-      chunks.add(new Chunk(new PVector(i, lastRow)));
+    for (int i=0; i<numChunks; i++){
+      if (i!=numChunks/2) chunks.add(new Chunk(new PVector(i, lastRow), numBuildings, buildingSpacing));
+      else chunks.add(new Chunk(new PVector(i, lastRow), new String[][]{{"b", "b", "b"}, {"r", "r", "r"}, {"b", "b", "b"}}, buildingSpacing));
     }
     
     for (int i=0; i<chunks.size(); i++){

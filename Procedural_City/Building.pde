@@ -35,7 +35,11 @@ class Building{
     else building_height = random(20, 40)*10;
     size = 3*10;
     
-    e = createBuildingStructure();
+    //e = createBuildingStructure();
+    s = createShape(BOX, size*2);
+    s.scale(1, building_height/size, 1);
+    s.setStroke(false);
+    s.setTexture(textures.get(chunkType));
     
   }
   
@@ -76,9 +80,10 @@ class Building{
   
   void display(){
     pushMatrix();
-    translate(posx, posy, posz);
+    translate(posx, posy - building_height, posz);
     rotateX(PI);
-    e.draw();
+    //e.draw();
+    shape(s);
     popMatrix();
    
   }

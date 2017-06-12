@@ -1,12 +1,12 @@
 import java.util.*;
 import java.lang.instrument.Instrumentation;
-import processing.vr.*;
-//import queasycam.*;
+//import processing.vr.*;
+import queasycam.*;
 import shapes3d.utils.*;
 import shapes3d.animation.*;
 import shapes3d.*;
 
-//QueasyCam cam;
+QueasyCam cam;
 ProceduralCity pc;
 ReferenceAxes ref;
 PApplet sketchPApplet;
@@ -14,7 +14,11 @@ PApplet sketchPApplet;
 ArrayList<PImage> textures;
 
 int cameraOffsetZ = 2;
-Boolean moving = true;
+Boolean moving = false;
+
+int numChunks = 3;
+int numBuildingsPerChunk = 9;
+int buildingSpacing = 150;
 
 void setup(){
   
@@ -26,41 +30,40 @@ void setup(){
   noSmooth();
 
   sketchPApplet = this;
-  //size(700, 700, P3D);
-  fullScreen(STEREO);
+  size(700, 700, P3D);
+  //fullScreen(STEREO);
   
-  //cam = new QueasyCam(this);
-  pc = new ProceduralCity();
+  cam = new QueasyCam(this);
+  pc = new ProceduralCity(numChunks, numBuildingsPerChunk, buildingSpacing);
   ref = new ReferenceAxes();
   
   // Nearest neighbor texture sampling
   ((PGraphicsOpenGL)g).textureSampling(2);
   hint(DISABLE_TEXTURE_MIPMAPS);
   
-  /* 
-  CAMERA NEAR ISN'T WORKING
-  println("camera near: " + ((PGraphicsOpenGL)sketchPApplet.g).cameraNear);
-  ((PGraphicsVR)sketchPApplet.g).defCameraNear = 500;
-  println("camera near: " + ((PGraphicsOpenGL)sketchPApplet.g).cameraNear);
-  */
 }
 
 void draw(){
-  cameraToOrigin();
+  print(frameRate);
+  //cameraToOrigin();
   if (moving) {
     cameraOffsetZ+=2;
-    if (cameraOffsetZ%(5*150)==0){
+    if (cameraOffsetZ%(buildingSpacing*sqrt(numBuildingsPerChunk)/2)==0){
       pc.addChunks();
     }
   }
   
-  translate(20, 300, -cameraOffsetZ);
+  translate(-numChunks*sqrt(numBuildingsPerChunk)*buildingSpacing/2 + buildingSpacing/2, 100, -(numChunks/2)*sqrt(numBuildingsPerChunk)*buildingSpacing/2 -cameraOffsetZ);
   
   background(0);
   pc.update();
   pc.display();
   ref.display();
 }
+
+/////////////////////////////////////////////////
+
+// INPUT
 
 void mouseClicked(){
   save("screenshot.png");
@@ -87,6 +90,9 @@ void cameraToOrigin(){
   translate(((PGraphicsOpenGL)sketchPApplet.g).cameraX, ((PGraphicsOpenGL)sketchPApplet.g).cameraY + 50, ((PGraphicsOpenGL)sketchPApplet.g).cameraZ);
 }
 
+///////////////////////////////
+
+// I think this needs to be in a correct class
 PImage createTexture(int chunkType){
   float resolution = 0.5;
   float size = 30;
