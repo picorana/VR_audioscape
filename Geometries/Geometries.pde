@@ -26,8 +26,9 @@ void setup(){
 }
 
 void draw(){ 
+  cameraToOrigin();
   background(50);
-  translate(width/2, height/2, 100);
+  translate(0, 0, 200);
   pushMatrix();
   rotateY(millis()/1000.0);
   o.display();
@@ -48,4 +49,8 @@ void printCameraCoordinates(){
     println("Camera Y:" + ((PGraphicsOpenGL)sketchPApplet.g).cameraY);
     println("Camera Z:" + ((PGraphicsOpenGL)sketchPApplet.g).cameraZ);
   }
+}
+
+void cameraToOrigin(){
+  translate(((PGraphicsOpenGL)sketchPApplet.g).cameraX, ((PGraphicsOpenGL)sketchPApplet.g).cameraY + 50, ((PGraphicsOpenGL)sketchPApplet.g).cameraZ);
 }

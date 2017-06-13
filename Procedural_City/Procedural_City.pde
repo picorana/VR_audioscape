@@ -12,6 +12,7 @@ ReferenceAxes ref;
 PApplet sketchPApplet;
 
 ArrayList<PImage> textures;
+ArrayList<PImage> billboardTextures;
 PShape skybox;
 
 int cameraOffsetZ = 2;
@@ -29,6 +30,9 @@ void setup(){
   for (int i=0; i<3; i++){
     textures.add(createTexture(i));
   }
+  
+  billboardTextures = new ArrayList();
+  fillBillboardTextures();
   
   noSmooth();
 
@@ -95,6 +99,8 @@ void cameraToOrigin(){
 
 ///////////////////////////////
 
+// TEXTURES 
+
 // I think this needs to be in a correct class
 PImage createTexture(int chunkType){
   float resolution = 0.5;
@@ -123,4 +129,23 @@ PImage createTexture(int chunkType){
 
   img.updatePixels();
   return img;
+}
+
+void fillBillboardTextures(){
+  billboardTextures.add(loadImage("pixelartburger.jpg"));
+  billboardTextures.add(loadImage("pixelartshark.jpg")); 
+  PGraphics pg = createGraphics(80, 20);
+  pg.beginDraw();
+  pg.textAlign(CENTER,CENTER);
+  pg.textSize(6);
+  pg.noStroke();
+  pg.textFont(loadFont("Microfuture-12.vlw"));
+  pg.fill(color(50, 50, 50));
+  pg.text("WORLD", pg.width/2 + 2, pg.height/2 + 2);
+  pg.fill(color(255, 50, 150));
+  pg.text("WORLD", pg.width/2, pg.height/2);
+  pg.endDraw();
+  pg.save("test.png");
+  billboardTextures.add((PImage)pg);
+  billboardTextures.add(loadImage("billboard.png"));
 }

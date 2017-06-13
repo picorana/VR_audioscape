@@ -17,6 +17,8 @@ class Building{
   PShape s;
   PShape foundation;
   
+  ArrayList<Billboard> billboards = new ArrayList();
+  
   public Building(int posx, int posy, int posz){
     this.posx = posx; this.posy = posy; this.posz = posz;
     
@@ -34,7 +36,7 @@ class Building{
     
     if (random(0, 1)<.9) building_height = random(10, 20)*10;
     else building_height = random(20, 40)*10;
-    size = 3*10;
+    size = 5*10;
     
     //e = createBuildingStructure();
     s = createShape(BOX, size*2);
@@ -46,6 +48,13 @@ class Building{
     foundation.setStroke(false);
     foundation.setFill(color(100, 100, 100));
     
+    for (float i=0; i<TWO_PI; i+=PI/2){
+      for (int j=0; j<building_height - 10; j+=1){
+        Billboard b = new Billboard(i, j);
+        billboards.add(b);
+        j += b.texture.height + (int)size + 5;
+      }
+    }
   }
   
   Extrusion createBuildingStructure(){
@@ -84,18 +93,12 @@ class Building{
   void update(){}
   
   void display(){
-    /*
-    pushMatrix();
-    translate(posx, 0, posz);
-    rotateX(PI/2);
-    shape(foundation);
-    popMatrix();*/
-    
     pushMatrix();
     translate(posx, posy - building_height, posz);
-    rotateX(PI);
-    //e.draw();
     shape(s);
+    for (int i=0; i<billboards.size(); i++){
+      billboards.get(i).display();
+    }
     popMatrix();
    
   }
