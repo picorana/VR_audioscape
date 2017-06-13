@@ -1,26 +1,29 @@
 import java.util.*;
 import java.lang.instrument.Instrumentation;
-//import processing.vr.*;
-import queasycam.*;
+import processing.vr.*;
+//import queasycam.*;
 import shapes3d.utils.*;
 import shapes3d.animation.*;
 import shapes3d.*;
 
-QueasyCam cam;
+//QueasyCam cam;
 ProceduralCity pc;
 ReferenceAxes ref;
 PApplet sketchPApplet;
 
 ArrayList<PImage> textures;
+PShape skybox;
 
 int cameraOffsetZ = 2;
-Boolean moving = false;
+Boolean moving = true;
 
 int numChunks = 3;
 int numBuildingsPerChunk = 9;
 int buildingSpacing = 150;
 
 void setup(){
+  //skybox = createShape(SPHERE);
+  //skybox.scale(20);
   
   textures = new ArrayList();
   for (int i=0; i<3; i++){
@@ -30,10 +33,10 @@ void setup(){
   noSmooth();
 
   sketchPApplet = this;
-  size(700, 700, P3D);
-  //fullScreen(STEREO);
+  //size(700, 700, P3D);
+  fullScreen(STEREO);
   
-  cam = new QueasyCam(this);
+  //cam = new QueasyCam(this);
   pc = new ProceduralCity(numChunks, numBuildingsPerChunk, buildingSpacing);
   ref = new ReferenceAxes();
   
@@ -44,8 +47,8 @@ void setup(){
 }
 
 void draw(){
-  print(frameRate);
-  //cameraToOrigin();
+  //println(frameRate);
+  cameraToOrigin();
   if (moving) {
     cameraOffsetZ+=2;
     if (cameraOffsetZ%(buildingSpacing*sqrt(numBuildingsPerChunk)/2)==0){

@@ -1,24 +1,25 @@
 class Chunk{
   
-  ArrayList<Building> buildings = new ArrayList();
-  ArrayList<Road> roads = new ArrayList();
+  // CHUNK CHARACTERISTICS
   PVector chunkPosition;
   int numBuildings = 9;
   int buildingSpacing = 150; 
-  int chunkSize = numBuildings*buildingSpacing;
-  
+  int chunkSize = numBuildings*buildingSpacing;  
   int chunkType = (int) random(0, 3);
   
-  public Chunk(){
-    fillChunk();
-  }
+  // CHUNK CONTENT
+  ArrayList<Building> buildings = new ArrayList();
+  ArrayList<Road> roads = new ArrayList();
+  ArrayList<PShape> accessories = new ArrayList();
   
+  // randomly generate a general chunk
   public Chunk(PVector chunkPosition, int numBuildings, int buildingSpacing){
     this.chunkPosition = chunkPosition; this.numBuildings = numBuildings; this.buildingSpacing = buildingSpacing;
     this.chunkSize = (int)sqrt(numBuildings)*buildingSpacing;
     fillChunk();
   }
   
+  // construct a chunk from a matrix of predefined contents
   public Chunk(PVector chunkPosition, String[][] chunkContent, int buildingSpacing){
     this.chunkPosition = chunkPosition; this.buildingSpacing = buildingSpacing;
     this.chunkSize = (int)sqrt(numBuildings)*buildingSpacing;
@@ -37,7 +38,14 @@ class Chunk{
     for (int i=0; i<chunkContent.length; i++){
       for (int j=0; j<chunkContent[0].length; j++){
         if (chunkContent[i][j]=="b") buildings.add(new Building(i*buildingSpacing, 0, j*buildingSpacing, chunkType));
-        else if (chunkContent[i][j]=="r") roads.add(new Road(new PVector(i*buildingSpacing, j*buildingSpacing), new PVector(buildingSpacing, buildingSpacing)));
+        else if (chunkContent[i][j]=="r") {
+          roads.add(new Road(new PVector(i*buildingSpacing, j*buildingSpacing), new PVector(buildingSpacing, buildingSpacing)));
+          if (accessories.size()==0){
+            PShape billboard = loadShape("billboard.obj");
+            billboard.scale(40);
+            accessories.add(billboard);
+          }  
+        }
       }
     }
   }
@@ -53,6 +61,14 @@ class Chunk{
     for (int i=0; i<roads.size(); i++){
       roads.get(i).display();
     }
+    pushMatrix();
+    rotateZ(PI);
+    rotateY(-PI/2);
+    translate(100, 0, 120);
+    for (int i=0; i<accessories.size(); i++){
+      shape(accessories.get(i));
+    }
+    popMatrix();
     popMatrix();
   }
     

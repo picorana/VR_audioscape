@@ -15,6 +15,7 @@ class Building{
   ContourScale conScale;
   
   PShape s;
+  PShape foundation;
   
   public Building(int posx, int posy, int posz){
     this.posx = posx; this.posy = posy; this.posz = posz;
@@ -40,6 +41,10 @@ class Building{
     s.scale(1, building_height/size, 1);
     s.setStroke(false);
     s.setTexture(textures.get(chunkType));
+    
+    foundation = createShape(RECT, size*3, size*3, size*3, size*3);
+    foundation.setStroke(false);
+    foundation.setFill(color(100, 100, 100));
     
   }
   
@@ -79,6 +84,13 @@ class Building{
   void update(){}
   
   void display(){
+    /*
+    pushMatrix();
+    translate(posx, 0, posz);
+    rotateX(PI/2);
+    shape(foundation);
+    popMatrix();*/
+    
     pushMatrix();
     translate(posx, posy - building_height, posz);
     rotateX(PI);
