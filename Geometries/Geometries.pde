@@ -9,7 +9,7 @@ PolySphere o2;
 PApplet sketchPApplet;
 
 void setup(){
-
+  
   sketchPApplet = this;
   
   //size(700, 700, P3D);
@@ -34,7 +34,7 @@ void draw(){
   o.display();
   o2.display();
   popMatrix();
-  //println(frameRate);
+  println(frameRate);
   
   //shader(lineShader);
 }

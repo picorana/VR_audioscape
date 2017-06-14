@@ -48,13 +48,14 @@ class Building{
     foundation.setStroke(false);
     foundation.setFill(color(100, 100, 100));
     
+    /*
     for (float i=0; i<TWO_PI; i+=PI/2){
       for (int j=0; j<building_height - 10; j+=1){
         Billboard b = new Billboard(i, j);
         billboards.add(b);
         j += b.texture.height + (int)size + 5;
       }
-    }
+    }*/
   }
   
   Extrusion createBuildingStructure(){
@@ -101,6 +102,19 @@ class Building{
     }
     popMatrix();
    
+  }
+  
+  void addBillboards(){
+    // put i+=PI/2 back!!
+    for (float i=PI/2; i<TWO_PI; i+=PI){
+      if (random(0, 1)<.3){
+        for (int j=20; j<building_height - 10; j+=1){
+          Billboard b = new Billboard(i, j);
+          billboards.add(b);
+          j += b.texture.height + (int)size + 5;
+        }
+      }
+    }
   }
 }
 

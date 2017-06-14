@@ -37,10 +37,14 @@ class Chunk{
   void fillChunk(String[][] chunkContent){
     for (int i=0; i<chunkContent.length; i++){
       for (int j=0; j<chunkContent[0].length; j++){
-        if (chunkContent[i][j]=="b") buildings.add(new Building(i*buildingSpacing, 0, j*buildingSpacing, chunkType));
+        if (chunkContent[i][j]=="b") {
+          Building b = new Building(i*buildingSpacing, 0, j*buildingSpacing, chunkType);
+          b.addBillboards();
+          buildings.add(b);
+        }
         else if (chunkContent[i][j]=="r") {
           roads.add(new Road(new PVector(i*buildingSpacing, j*buildingSpacing), new PVector(buildingSpacing, buildingSpacing)));
-          if (accessories.size()==0){
+          if (accessories.size()==0 && random(0, 1)<.3){
             PShape billboard = loadShape("billboard.obj");
             billboard.scale(40);
             accessories.add(billboard);

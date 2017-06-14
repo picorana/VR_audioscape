@@ -15,15 +15,15 @@ void setup(){
   //cam = new QueasyCam(this);
   fullScreen(STEREO);
   t = new Terrain(tile_length, strips_length, strips_width, strips_num);
+  
+  ((PGraphicsOpenGL)sketchPApplet.g).cameraFar = 20;
 }
 
 void draw() {
   cameraToOrigin();
-  background(color(50, 102, 153));
-  lights();
-  ambientLight(102, 102, 102);
+  background(255);
  
-  translate(- tile_length*strips_num/2, 500, -cameraOffsetZ - strips_num*tile_length*1.5);
+  translate(- tile_length*strips_num/2, 350, -cameraOffsetZ - strips_num*tile_length*1.5);
   t.display();
   
   cameraOffsetZ++;
