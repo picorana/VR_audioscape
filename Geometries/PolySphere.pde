@@ -7,14 +7,14 @@ class PolySphere{
   
   public PolySphere(int radius, String type){
     if (type=="pyramid") {
-      int size = 100;
+      int size = 90;
       s = createBasePyramid(size, 60);
-      division = PI/(360/size) - 0.50;
+      division = PI/(360/size) - 0.40;
     }
     if (type=="spike") {
-      int size = 10;
+      int size = 20;
       s = createBaseSpike(size);
-      division = PI/(360/size) + 0.31;
+      division = PI/(360/size) + 0.5;
     }
     
     center = new PVector(0, 0, 0);
@@ -41,6 +41,7 @@ class PolySphere{
     PShape s = loadShape("spike.obj");
     s.rotateX(PI/2);
     s.scale(size);
+    s.setStroke(false);
     s.setStroke(true);
     s.setStroke(color(255, 255, 255));
     s.setStrokeWeight(0.1);                                            

@@ -7,6 +7,7 @@ Terrain t;
 PApplet sketchPApplet;
 int cameraOffsetZ = 2;
 int strips_length = 1, tile_length = 20, strips_width = 100, strips_num = 100;
+//PShader fogShader;
 
 void setup(){
   sketchPApplet = this;
@@ -16,7 +17,7 @@ void setup(){
   fullScreen(STEREO);
   t = new Terrain(tile_length, strips_length, strips_width, strips_num);
   
-  ((PGraphicsOpenGL)sketchPApplet.g).cameraFar = 20;
+  //fogShader = loadShader("fogfrag.glsl", "fogvert.glsl");
 }
 
 void draw() {
@@ -30,6 +31,7 @@ void draw() {
   if (cameraOffsetZ%(strips_length*tile_length)<1) t.addStrip();
   
   println(frameRate);
+  //shader(fogShader);
 }
 
 void mouseClicked(){

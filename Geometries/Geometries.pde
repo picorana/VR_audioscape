@@ -28,7 +28,7 @@ void setup(){
 void draw(){ 
   cameraToOrigin();
   background(50);
-  translate(0, 0, 200);
+  translate(0, 0, 300);
   pushMatrix();
   rotateY(millis()/1000.0);
   o.display();
