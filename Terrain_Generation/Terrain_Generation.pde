@@ -7,20 +7,23 @@ Terrain t;
 PApplet sketchPApplet;
 int cameraOffsetZ = 2;
 int strips_length = 1, tile_length = 20, strips_width = 100, strips_num = 100;
-//PShader fogShader;
+PShader fogShader;
 
 void setup(){
-  sketchPApplet = this;
   
+  fogShader = loadShader("fogfrag.glsl", "fogvert.glsl");
   //size(600, 600, P3D);
   //cam = new QueasyCam(this);
   fullScreen(STEREO);
+  sketchPApplet = this;
   t = new Terrain(tile_length, strips_length, strips_width, strips_num);
   
-  //fogShader = loadShader("fogfrag.glsl", "fogvert.glsl");
+  
+  //hint(DISABLE_DEPTH_TEST); 
 }
 
 void draw() {
+  
   cameraToOrigin();
   background(255);
  
@@ -30,8 +33,10 @@ void draw() {
   cameraOffsetZ++;
   if (cameraOffsetZ%(strips_length*tile_length)<1) t.addStrip();
   
+  shader(fogShader);
+  
   println(frameRate);
-  //shader(fogShader);
+  
 }
 
 void mouseClicked(){

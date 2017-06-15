@@ -60,12 +60,13 @@ void draw(){
     }
   }
   
-  translate(-numChunks*sqrt(numBuildingsPerChunk)*buildingSpacing/2 + buildingSpacing/2, 100, -(numChunks/2)*sqrt(numBuildingsPerChunk)*buildingSpacing/2 + 300 -cameraOffsetZ);
+  translate(-numChunks*sqrt(numBuildingsPerChunk)*buildingSpacing/2 + buildingSpacing/2, 100, -(numChunks/2)*sqrt(numBuildingsPerChunk)*buildingSpacing/2 + 100 -cameraOffsetZ);
   
   background(0);
   pc.update();
   pc.display();
   //ref.display();
+  println(frameRate);
 }
 
 /////////////////////////////////////////////////
