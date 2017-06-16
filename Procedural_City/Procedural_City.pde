@@ -1,7 +1,9 @@
-import java.util.*;
-import java.lang.instrument.Instrumentation;
+/* Due to the absence of conditional imports, you have to manually 
+comment out the import for processing.vr when trying it in java mode. */
 import processing.vr.*;
 //import queasycam.*;
+
+import java.util.*;
 import shapes3d.utils.*;
 import shapes3d.animation.*;
 import shapes3d.*;
@@ -10,10 +12,10 @@ import shapes3d.*;
 ProceduralCity pc;
 ReferenceAxes ref;
 PApplet sketchPApplet;
+PShader fogShader;
 
 ArrayList<PImage> textures;
 ArrayList<PImage> billboardTextures;
-PShape skybox;
 
 int cameraOffsetZ = 2;
 Boolean moving = true;
@@ -22,25 +24,22 @@ int numChunks = 3;
 int numBuildingsPerChunk = 9;
 int buildingSpacing = 150;
 
+
 void setup(){
-  //skybox = createShape(SPHERE);
-  //skybox.scale(20);
+  sketchPApplet = this;
   
+  // textures are created/loaded at the beginning 
+  billboardTextures = new ArrayList();
+  fillBillboardTextures();
   textures = new ArrayList();
   for (int i=0; i<3; i++){
     textures.add(createTexture(i));
-  }
-  
-  billboardTextures = new ArrayList();
-  fillBillboardTextures();
-  
-  noSmooth();
+  }   
 
-  sketchPApplet = this;
-  //size(700, 700, P3D);
   fullScreen(STEREO);
-  
+  //size(700, 700, P3D);
   //cam = new QueasyCam(this);
+  
   pc = new ProceduralCity(numChunks, numBuildingsPerChunk, buildingSpacing);
   ref = new ReferenceAxes();
   
@@ -48,25 +47,38 @@ void setup(){
   ((PGraphicsOpenGL)g).textureSampling(2);
   hint(DISABLE_TEXTURE_MIPMAPS);
   
+  fogShader = loadShader("fogfrag.glsl", "fogvert.glsl");
 }
 
+
 void draw(){
-  //println(frameRate);
+  
   cameraToOrigin();
+  
   if (moving) {
     cameraOffsetZ+=2;
+    // if the camera surpasses a block, a new block is added in the direction the camera is moving
     if (cameraOffsetZ%(buildingSpacing*sqrt(numBuildingsPerChunk)/2)==0){
-      pc.addChunks();
+      thread("loadNewChunk");
     }
   }
   
+  // translate the chunks so the camera is in the middle
   translate(-numChunks*sqrt(numBuildingsPerChunk)*buildingSpacing/2 + buildingSpacing/2, 100, -(numChunks/2)*sqrt(numBuildingsPerChunk)*buildingSpacing/2 + 100 -cameraOffsetZ);
   
   background(0);
-  pc.update();
   pc.display();
+  
+  shader(fogShader);
+  
   //ref.display();
+  
   println(frameRate);
+}
+
+void loadNewChunk(){
+  pc.addChunks();
+  println("thread finishing");
 }
 
 /////////////////////////////////////////////////
@@ -135,6 +147,11 @@ PImage createTexture(int chunkType){
 void fillBillboardTextures(){
   billboardTextures.add(loadImage("pixelartburger.jpg"));
   billboardTextures.add(loadImage("pixelartshark.jpg")); 
+  billboardTextures.add(loadImage("pixelartburger.jpg"));
+  billboardTextures.add(loadImage("billboard.png"));
+}
+
+PImage writeOnBillboard(){
   PGraphics pg = createGraphics(80, 20);
   pg.beginDraw();
   pg.textAlign(CENTER,CENTER);
@@ -147,6 +164,5 @@ void fillBillboardTextures(){
   pg.text("WORLD", pg.width/2, pg.height/2);
   pg.endDraw();
   pg.save("test.png");
-  billboardTextures.add((PImage)pg);
-  billboardTextures.add(loadImage("billboard.png"));
+  return (PImage)pg;
 }
