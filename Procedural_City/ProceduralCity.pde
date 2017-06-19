@@ -42,7 +42,6 @@ class ProceduralCity{
     }
     
     for (int i=0; i<chunks.size(); i++){
-      println(chunks.get(i).chunkPosition);
       if(chunks.get(i).chunkPosition.y <= (lastRow-numChunks)) chunks.remove(chunks.get(i));
     }
   }

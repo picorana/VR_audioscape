@@ -1,6 +1,7 @@
 /* Due to the absence of conditional imports, you have to manually 
 comment out the import for processing.vr when trying it in java mode. */
 import processing.vr.*;
+import android.app.*;
 //import queasycam.*;
 
 import java.util.*;
@@ -48,6 +49,8 @@ void setup(){
   hint(DISABLE_TEXTURE_MIPMAPS);
   
   fogShader = loadShader("fogfrag.glsl", "fogvert.glsl");
+  
+  getMemorySize();
 }
 
 
@@ -73,7 +76,7 @@ void draw(){
   
   //ref.display();
   
-  println(frameRate);
+  //println(frameRate);
 }
 
 void loadNewChunk(){
@@ -165,4 +168,27 @@ PImage writeOnBillboard(){
   pg.endDraw();
   pg.save("test.png");
   return (PImage)pg;
+}
+
+void getMemorySize() {
+
+    long freeSize = 0L;
+    long totalSize = 0L;
+    long usedSize = -1L;
+    try {
+        Runtime info = Runtime.getRuntime();
+        freeSize = info.freeMemory();
+        totalSize = info.totalMemory();
+        usedSize = totalSize - freeSize;
+        
+        println("free memory: " + freeSize);
+        println("total memory: " + totalSize);
+        println("used memory: " + usedSize);
+        
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    
+    //return usedSize;
+
 }

@@ -1,25 +1,38 @@
-//import queasycam.*;
+import queasycam.*;
 import java.util.*;
-import processing.vr.*;
+//import processing.vr.*;
 
-//QueasyCam cam;
+QueasyCam cam;
 Terrain t;
 PApplet sketchPApplet;
 int cameraOffsetZ = 2;
 int strips_length = 1, tile_length = 20, strips_width = 100, strips_num = 100;
 PShader fogShader;
 
+float curveValue = 0;
+
+long freeMemory;
+
 void setup(){
-  
+
   fogShader = loadShader("fogfrag.glsl", "fogvert.glsl");
-  //size(600, 600, P3D);
-  //cam = new QueasyCam(this);
-  fullScreen(STEREO);
+  size(600, 600, P3D);
+  cam = new QueasyCam(this);
+  //fullScreen(STEREO);
   sketchPApplet = this;
+  
   t = new Terrain(tile_length, strips_length, strips_width, strips_num);
+  /*
+  while (getMemorySize() > 10000){
+    strips_width += 10;
+    strips_num += 10;
+    tile_length -= 1;
+    t = new Terrain(tile_length, strips_length, strips_width, strips_num);
+  }*/
   
+  println("strips_width: " + strips_width);
+  println("strips_num: " + strips_num);
   
-  //hint(DISABLE_DEPTH_TEST); 
 }
 
 void draw() {
@@ -35,7 +48,7 @@ void draw() {
   
   shader(fogShader);
   
-  println(frameRate);
+  //println(frameRate);
   
 }
 
@@ -43,6 +56,33 @@ void mouseClicked(){
   save("screenshot.png");
 }
 
+void keyPressed(){
+  if (key=='l'){
+    println("curveValue: " + --curveValue);
+  }
+  if (key=='r'){
+    println("curveValue: " + ++curveValue);
+  }
+}
+
 void cameraToOrigin(){
   translate(((PGraphicsOpenGL)sketchPApplet.g).cameraX, ((PGraphicsOpenGL)sketchPApplet.g).cameraY + 50, ((PGraphicsOpenGL)sketchPApplet.g).cameraZ);
+}
+
+long getMemorySize() {
+  long freeSize = 0L;
+  long totalSize = 0L;
+  long usedSize = -1L;
+  try {
+    Runtime info = Runtime.getRuntime();
+    freeSize = info.freeMemory();
+    totalSize = info.totalMemory();
+    usedSize = totalSize - freeSize;
+    println("free memory: " + freeSize);
+    println("total memory: " + totalSize);
+    println("used memory: " + usedSize);
+  } catch (Exception e) {
+    e.printStackTrace();
+  }
+  return freeSize;
 }

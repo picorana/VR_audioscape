@@ -2,7 +2,8 @@ class Terrain{
   
   ArrayList<PShape> strips = new ArrayList();
   PShape planeUnderneath;
-  float noiseScale = 0.003, y_scale = 300;
+  PShape lastStrip;
+  float noiseScale = 0.003, y_scale = 300, orig_y_scale = 300, prev_y1 = 0, prev_y2 = 0;
   int tile_length, strips_length, strips_width, strips_num;
   int strip_index = 0;
   int steps = 0;
@@ -42,13 +43,20 @@ class Terrain{
       PShape r = createShape();
       r.beginShape();
       
-      float y0 = -noise(i*tile_length*noiseScale, strip_index*tile_length*noiseScale)*y_scale;
+      if (i<strips_width/2-6 || i>strips_width/2+6) y_scale = orig_y_scale*abs(strips_width/2-i)*0.05;
+      else y_scale = orig_y_scale*0.03 + 100;
+      
+      //float y0 = -noise(i*tile_length*noiseScale, strip_index*tile_length*noiseScale)*y_scale;
+      float y0 = prev_y1;
       float y1 = -noise((i*tile_length+tile_length)*noiseScale, strip_index*tile_length*noiseScale)*y_scale;
       float y2 = -noise((i*tile_length+tile_length)*noiseScale, (strip_index*tile_length+tile_length)*noiseScale)*y_scale;
-      float y3 = -noise((i*tile_length)*noiseScale, (strip_index*tile_length+tile_length)*noiseScale)*y_scale;
+      //float y3 = -noise((i*tile_length)*noiseScale, (strip_index*tile_length+tile_length)*noiseScale)*y_scale;
+      float y3 = prev_y2;
       
       r.noStroke();   
-      r.fill(lerpColor(from, to, -y0/y_scale), 255);
+      if (i<strips_width/2-5 || i>strips_width/2+5) r.fill(lerpColor(from, to, -y0/y_scale), 255);
+      else if (i == strips_width/2-4 || i==strips_width/2+4) r.fill(color(150, 150, 150));
+      else r.fill(color(50, 50, 50));
       
       r.vertex(i*tile_length, y0, 0);
       r.vertex(i*tile_length + tile_length, y1, 0);
@@ -56,6 +64,9 @@ class Terrain{
       r.vertex(i*tile_length, y3, tile_length);
       r.endShape(CLOSE);
       s.addChild(r);
+      
+      prev_y1 = y1;
+      prev_y2 = y2;
     }
     return s;
   }
