@@ -12,6 +12,7 @@ PShader fogShader;
 float curveValue = 0;
 
 long freeMemory;
+boolean recording = false;
 
 void setup(){
 
@@ -37,19 +38,21 @@ void setup(){
 
 void draw() {
   
+  curveValue = sin(float(frameCount)/100.0)*20.0;
+  
   cameraToOrigin();
   background(255);
  
   translate(- tile_length*strips_num/2, 350, -cameraOffsetZ - strips_num*tile_length*1.5);
   t.display();
   
-  cameraOffsetZ++;
+  cameraOffsetZ+=2;
   if (cameraOffsetZ%(strips_length*tile_length)<1) t.addStrip();
   
   shader(fogShader);
   
   //println(frameRate);
-  
+  if (recording && (frameCount%5)==0) saveFrame("line-######.png");
 }
 
 void mouseClicked(){
@@ -62,6 +65,10 @@ void keyPressed(){
   }
   if (key=='r'){
     println("curveValue: " + ++curveValue);
+  }
+  if (key=='c'){
+    if (recording == false) recording = true;
+    else recording = false;
   }
 }
 
