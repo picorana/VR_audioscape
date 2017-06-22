@@ -1,8 +1,8 @@
-import queasycam.*;
+//import queasycam.*;
 import java.util.*;
-//import processing.vr.*;
+import processing.vr.*;
 
-QueasyCam cam;
+//QueasyCam cam;
 Terrain t;
 PApplet sketchPApplet;
 int cameraOffsetZ = 2;
@@ -17,19 +17,12 @@ boolean recording = false;
 void setup(){
 
   fogShader = loadShader("fogfrag.glsl", "fogvert.glsl");
-  size(600, 600, P3D);
-  cam = new QueasyCam(this);
-  //fullScreen(STEREO);
+  //size(600, 600, P3D);
+  //cam = new QueasyCam(this);
+  fullScreen(STEREO);
   sketchPApplet = this;
   
   t = new Terrain(tile_length, strips_length, strips_width, strips_num);
-  /*
-  while (getMemorySize() > 10000){
-    strips_width += 10;
-    strips_num += 10;
-    tile_length -= 1;
-    t = new Terrain(tile_length, strips_length, strips_width, strips_num);
-  }*/
   
   println("strips_width: " + strips_width);
   println("strips_num: " + strips_num);

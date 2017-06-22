@@ -1,42 +1,62 @@
+
+/* TODO:
+*  solve cracks in the road issue
+*  solve problem with starting road (it's straight)
+*  move road to proper class
+*  solve color + texture shader
+*  manage colors on terrain by using different colors for different vertices
+*  refactor & comment everything
+*  try plants
+*  I'd rethink the way the terrain is implemented:
+*    - are we wasting resources by keeping an arraylist of PShapes? Is there a better way to do this?
+*    - better use a quad strip instead of custom PShapes?
+*  move every util function into util class?
+*/
+
 import queasycam.*;
 import java.util.*;
 //import processing.vr.*;
 
 QueasyCam cam;
-Terrain t;
 PApplet sketchPApplet;
-int cameraOffsetZ = 2;
-int strips_length = 1, tile_length = 20, strips_width = 100, strips_num = 100;
+boolean recording   = false;
+
 PShader fogShader;
 
-float curveValue = 0;
+// Terrain data
+Terrain t;
+int strips_length   = 1;
+int tile_length     = 20;
+int strips_width    = 100;
+int strips_num      = 100;
 
-long freeMemory;
-boolean recording = false;
+// Movement data
+float curveValue    = 0;
+int cameraOffsetZ   = 2;
+
+// Memory management
+long freeMemory; 
+
 
 void setup(){
-
-  fogShader = loadShader("fogfrag.glsl", "fogvert.glsl");
   size(600, 600, P3D);
   cam = new QueasyCam(this);
   //fullScreen(STEREO);
+  
   sketchPApplet = this;
+  fogShader = loadShader("fogfrag.glsl", "fogvert.glsl");
   
   t = new Terrain(tile_length, strips_length, strips_width, strips_num);
-  
-  println("strips_width: " + strips_width);
-  println("strips_num: " + strips_num);
-  
 }
 
 void draw() {
-  
-  curveValue = sin(float(frameCount)/100.0)*20.0;
-  
-  cameraToOrigin();
   background(255);
- 
-  translate(- tile_length*strips_num/2, 350, -cameraOffsetZ - strips_num*tile_length*1.5);
+  cameraToOrigin(); // set the camera position to [0, 0, 0]
+  
+  curveValue += sin(frameCount/100.0)*.1; // move the curve according to a sine wave
+  
+  translate(- tile_length*strips_num*.5, 350, -cameraOffsetZ - strips_num*tile_length*1.5);
+  
   t.display();
   
   cameraOffsetZ+=2;
@@ -48,9 +68,11 @@ void draw() {
   if (recording && (frameCount%5)==0) saveFrame("line-######.png");
 }
 
+
 void mouseClicked(){
   save("screenshot.png");
 }
+
 
 void keyPressed(){
   if (key=='l'){
@@ -65,10 +87,14 @@ void keyPressed(){
   }
 }
 
+
+// sets the camera position to [0, 0, 0]
 void cameraToOrigin(){
-  translate(((PGraphicsOpenGL)sketchPApplet.g).cameraX, ((PGraphicsOpenGL)sketchPApplet.g).cameraY + 50, ((PGraphicsOpenGL)sketchPApplet.g).cameraZ);
+  translate(((PGraphicsOpenGL)sketchPApplet.g).cameraX, ((PGraphicsOpenGL)sketchPApplet.g).cameraY, ((PGraphicsOpenGL)sketchPApplet.g).cameraZ);
 }
 
+
+// queries the memory of the phone to understand how much memory is the app using
 long getMemorySize() {
   long freeSize = 0L;
   long totalSize = 0L;
