@@ -2,6 +2,7 @@ class Terrain{
   
   ArrayList<PShape> strips = new ArrayList();
   ArrayList<PVector> prevVerts = new ArrayList();
+  ArrayList<Blade> grass = new ArrayList();
 
   // Terrain size data
   int tile_length;
@@ -23,6 +24,7 @@ class Terrain{
   color from = color(173, 152, 122);
   
   Road road;
+  Blade blade;
   
   public Terrain(int tile_length, int strips_length, int strips_width, int strips_num){
     this.tile_length = tile_length; 
@@ -37,28 +39,38 @@ class Terrain{
       curveValue += sin(float(strip_index-strips_num/2)*.125);
       addStrip();
     }
+    
   }
   
   
   void display(){
+    // display the terrain strips
     for (int i=0; i<strips.size(); i++){
       pushMatrix();
       translate(0, 0, (tile_length)*i + strip_index*(tile_length));
       shape(strips.get(i));
       popMatrix();
     }
-    for (int i=0; i<road.road.size(); i++){
-      pushMatrix();
-      translate(0, 0, (tile_length)*i + strip_index*(tile_length));
-      shape(road.road.get(i));
-      popMatrix();
+    
+    // display the road
+    road.display();
+
+    
+    if (grassEnabled){
+      for (int i=0; i<grass.size(); i++){
+        pushMatrix();
+        translate(0, 0, grass.get(i).anchor.z + strips_num*tile_length);
+        grass.get(i).display();
+        popMatrix();
+      }
     }
+
   }
   
   
   void addStrip(){
     strips.add(createStrip());
-    road.road.add(road.createRoadStrip());
+    road.update();
     strip_index++;
     if (strips.size()>strips_num) {
       strips.remove(0);
@@ -67,7 +79,7 @@ class Terrain{
     }
   }
   
-    
+  // the first strip of the road is a flat strip
   PShape createFlatStrip(){
     colorMode(RGB, 255);
     PShape s = createShape(GROUP);
@@ -129,6 +141,18 @@ class Terrain{
       
       prev_y1 = y1;
       prev_y2 = y2;
+      
+      if (grassEnabled){
+        if (y2>-50 && random(0, 1)<.1 && (i<strips_width/2 +curveValue -5 || i> strips_width/2 +curveValue + 5)) {
+          grass.add(new Blade(new PVector(i*tile_length, y2 - 5, strip_index*tile_length), 5));
+          if (random(0, 1) < .1){
+            for (int j=0; j<3; j++){
+              grass.add(new Blade(new PVector(i*tile_length, y2 - 5, (strip_index + random(-.1, .1))*tile_length), 5));
+            }
+          }
+        }
+      }
+
     }
     
     prevVerts = tmpVerts;

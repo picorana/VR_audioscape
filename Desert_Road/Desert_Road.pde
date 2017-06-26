@@ -4,7 +4,6 @@
 *  solve problem with starting road (it's straight)
 *  move road to proper class
 *  solve color + texture shader
-*  manage colors on terrain by using different colors for different vertices
 *  refactor & comment everything
 *  try plants
 *  I'd rethink the way the terrain is implemented:
@@ -20,15 +19,20 @@ import java.util.*;
 QueasyCam cam;
 PApplet sketchPApplet;
 boolean recording   = false;
+boolean grassEnabled = false;
 
+PShader skyShader;
 PShader fogShader;
+boolean shaderEnabled = true;
 
 // Terrain data
-Terrain t;
+Terrain terrain;
 int strips_length   = 1;
 int tile_length     = 20;
 int strips_width    = 100;
 int strips_num      = 100;
+
+PShape skybox;
 
 // Movement data
 float curveValue    = 0;
@@ -37,34 +41,46 @@ int cameraOffsetZ   = 2;
 // Memory management
 long freeMemory; 
 
-
 void setup(){
-  size(600, 600, P3D);
+  
+  sketchPApplet = this;
+  
+  size(700, 700, P3D);
   cam = new QueasyCam(this);
   //fullScreen(STEREO);
   
-  sketchPApplet = this;
+  skyShader = loadShader("sky7.glsl");
   fogShader = loadShader("fogfrag.glsl", "fogvert.glsl");
   
-  t = new Terrain(tile_length, strips_length, strips_width, strips_num);
+  skyShader.set("iResolution", float(width), float(height));
+  skyShader.set("iMouse", float(mouseX), float(mouseY));
+  
+  skybox = createShape(SPHERE, 1000);
+  skybox.setFill(color(200, 200, 255));
+  skybox.setStroke(false);
+  
+  terrain = new Terrain(tile_length, strips_length, strips_width, strips_num);
 }
 
 void draw() {
   background(255);
-  cameraToOrigin(); // set the camera position to [0, 0, 0]
+
+  shape(skybox);
+  
+  filter(skyShader);
+  
+  cameraCenter();
   
   curveValue += sin(frameCount/100.0)*.1; // move the curve according to a sine wave
   
-  translate(- tile_length*strips_num*.5, 350, -cameraOffsetZ - strips_num*tile_length*1.5);
-  
-  t.display();
+  terrain.display();
   
   cameraOffsetZ+=2;
-  if (cameraOffsetZ%(strips_length*tile_length)<1) t.addStrip();
+  if (cameraOffsetZ%(strips_length*tile_length)<1) terrain.addStrip();
   
-  shader(fogShader);
+  if (shaderEnabled) shader(fogShader);
   
-  //println(frameRate);
+  println(frameRate);
   if (recording && (frameCount%5)==0) saveFrame("line-######.png");
 }
 
@@ -75,18 +91,21 @@ void mouseClicked(){
 
 
 void keyPressed(){
-  if (key=='l'){
-    println("curveValue: " + --curveValue);
-  }
-  if (key=='r'){
-    println("curveValue: " + ++curveValue);
-  }
   if (key=='c'){
     if (recording == false) recording = true;
     else recording = false;
+  } 
+  if (key == 'v'){
+    if (shaderEnabled) shaderEnabled = false;
+    else shaderEnabled = true;
   }
 }
 
+// sets the camera to terrain center
+void cameraCenter(){
+  cameraToOrigin();
+  translate(- tile_length*strips_num*.5, 350, -cameraOffsetZ - strips_num*tile_length*1.5);
+}
 
 // sets the camera position to [0, 0, 0]
 void cameraToOrigin(){
