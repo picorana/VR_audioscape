@@ -11,8 +11,9 @@ class Road{
   int strip_index = 0;
   
   
-  public Road(int strips_width){
+  public Road(int strips_width, int road_width){
     this.strips_width = strips_width;
+    this.road_width = road_width;
   }
   
   
@@ -47,7 +48,7 @@ class Road{
     s.vertex(((strips_width/2 + curveValue) - road_width)*tile_length, road_height, tile_length);
     s.vertex(((strips_width/2 + curveValue) + road_width)*tile_length, road_height, tile_length);
     
-    roadBorders.add(new PVector((strips_width/2 + curveValue - 5)*tile_length, (strips_width/2 + curveValue + 5)*tile_length));
+    roadBorders.add(new PVector((strips_width/2 + curveValue - road_width)*tile_length, (strips_width/2 + curveValue + road_width)*tile_length));
     s.endShape();
     
     return s;
