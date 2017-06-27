@@ -35,13 +35,6 @@ class Terrain{
     this.strips_num = strips_num;
     
     road = new Road(strips_width, road_width);
-    
-    strips.add(createFlatStrip());
-    for (int i=1; i<strips_num; i++){
-      curveValue += sin(float(strip_index-strips_num/2)*.125);
-      addStrip();
-    }
-    
   }
   
   
@@ -61,7 +54,6 @@ class Terrain{
     // display the road
     road.display();
 
-    
     if (grassEnabled){
       for (int i=0; i<grass.size(); i++){
         pushMatrix();
@@ -71,6 +63,17 @@ class Terrain{
       }
     }
 
+  }
+  
+  
+  void startTerrain(){
+    // first strip is flat
+    strips.add(createFlatStrip());
+    // build following strips
+    for (int i=1; i<strips_num; i++){
+      curveValue += sin(float(strip_index-strips_num/2)*.125);
+      addStrip();
+    }
   }
   
   
@@ -84,6 +87,7 @@ class Terrain{
       road.roadBorders.remove(0);
     }
   }
+  
   
   // the first strip of the road is a flat strip
   PShape createFlatStrip(){
@@ -108,7 +112,7 @@ class Terrain{
       s.addChild(r);
     }
     
-    road.roadBorders.add(new PVector((strips_width/2 + curveValue - 5)*tile_length, (strips_width/2 + curveValue + 5)*tile_length));
+    road.roadBorders.add(new PVector((strips_width/2 + curveValue - road_width)*tile_length, (strips_width/2 + curveValue + road_width)*tile_length));
     
     return s;
   }
@@ -118,7 +122,6 @@ class Terrain{
     colorMode(RGB, 255);
     
     ArrayList<PVector> tmpVerts = new ArrayList();
-    ArrayList<PVector> tmpNormals = new ArrayList();
     
     PShape s = createShape(GROUP);
     for (int i=0; i<strips_width; i++){
@@ -126,7 +129,8 @@ class Terrain{
       PShape r = createShape();
       r.beginShape();
 
-      float dist = abs((strips_width/2 + curveValue)-i);
+      float road_center = strips_width/2 + curveValue;
+      float dist = abs(road_center - i);
       y_scale =  300/(1+pow((float)Math.E, -dist*0.5 + 10)); // sigmoid equation
       
       float y0 = prevVerts.get(i).x;
@@ -138,71 +142,56 @@ class Terrain{
 
       r.fill(lerpColor(from, to, -y2/y_scale), 255);   
       
-      PVector p0 = new PVector(i*tile_length, y0, 0);
-      PVector p1 = new PVector(i*tile_length + tile_length, y1, 0);
-      PVector p2 = new PVector(i*tile_length + tile_length, y2, tile_length);
-      PVector faceNormal = (p1.sub(p0)).cross(p2.sub(p0)); // (v1 - v0), (v2 - v0)
-      //PVector newNormal0 = new PVector(prevFaceNormal.x + faceNormal.x, prevFaceNormal.y + faceNormal.y, prevFaceNormal.z + faceNormal.z).normalize();
-      PVector newNormal0 = prevFaceNormal;
-      //PVector newNormal1 = new PVector(faceNormal.x + prevFaceNormals.get(i).x, faceNormal.y + prevFaceNormals.get(i).y, faceNormal.z + prevFaceNormals.get(i).z).normalize();
-      PVector newNormal1 = prevFaceNormals.get(i);
-      PVector newNormal2 = prevFaceNormal.add(prevFaceNormals.get(i)).normalize();
-      
-      //r.normal(newNormal0.x, newNormal0.y, newNormal0.z);
       r.vertex(i*tile_length, y0, 0); // 0
-      
-      //r.normal(newNormal1.x, newNormal1.y, newNormal1.z);
       r.vertex(i*tile_length + tile_length, y1, 0); // 1
-      
-      //r.normal(faceNormal.x, faceNormal.y, faceNormal.z);
       r.vertex(i*tile_length + tile_length, y2, tile_length); // 2
-      
-      //r.normal(newNormal0.x, newNormal0.y, newNormal0.z);
       r.vertex(i*tile_length, y3, tile_length); // 3
 
       r.endShape(CLOSE);
       s.addChild(r);
       
       tmpVerts.add(new PVector(y3, y2));
-      tmpNormals.add(faceNormal);
-      prevFaceNormal = faceNormal;
       
       prev_y1 = y1;
       prev_y2 = y2;
       
       if (grassEnabled){
-        if (y2>-50 && random(0, 1)<.1 && (i<strips_width/2 +curveValue -5 || i> strips_width/2 +curveValue + 5)) {
-          grass.add(new Blade(new PVector(i*tile_length, y2 - 5, strip_index*tile_length), 5));
-          if (random(0, 1) < .1){
-            for (int j=0; j<3; j++){
-              grass.add(new Blade(new PVector(i*tile_length, y2 - 5, (strip_index + random(-.1, .1))*tile_length), 5));
-            }
-          }
-        }
+        addGrass(y2, i);
       }
 
     }
     
     prevVerts = tmpVerts;
-    prevFaceNormals = tmpNormals;
     
     recalculateNormals();
     
     return s;
   }
   
+  
+  void addGrass(float vert_height, int index){
+    if (vert_height>-50 && random(0, 1)<.1 && (index<strips_width/2 +curveValue -5 || index> strips_width/2 +curveValue + 5)) {
+      grass.add(new Blade(new PVector(index*tile_length, vert_height - 5, strip_index*tile_length), 5));
+      if (random(0, 1) < .1){
+        for (int j=0; j<3; j++){
+          grass.add(new Blade(new PVector(index*tile_length, vert_height - 5, (strip_index + random(-.1, .1))*tile_length), 5));
+        }
+      }
+    }
+  }
+  
   void recalculateNormals(){
-    /*
-    +--+--+--+
-    |f0|f1|f2|
-    +--+--+--+
-    |f3|f4|f5|
-    +--+--+--+
-    
-    y2--y3
-    |    |
-    y1--y0
-    */
+    /* ---
+        +--+--+--+
+        |f0|f1|f2|
+        +--+--+--+
+        |f3|f4|f5|
+        +--+--+--+
+        
+        y2--y3
+        |    |
+        y1--y0
+    --- */ 
     
     if (strips.size()==1) return;
     PShape s0 = strips.get(strips.size()-1);
@@ -220,29 +209,12 @@ class Terrain{
       PVector f4Normal = PVector.sub(f4.getVertex(1), f4.getVertex(0)).cross(PVector.sub(f4.getVertex(2), f4.getVertex(0)));
       PShape f5 = s1.getChild(i+1);
       PVector f5Normal = PVector.sub(f5.getVertex(1), f5.getVertex(0)).cross(PVector.sub(f5.getVertex(2), f5.getVertex(0)));
-      
-      /*
-      PVector y2Normal = f0Normal.add(f1Normal).normalize();
-      f0.setNormal(3, y2Normal.x, y2Normal.y, y2Normal.z);
-      f1.setNormal(2, y2Normal.x, y2Normal.y, y2Normal.z);
-      
-      PVector y3Normal = f1Normal.add(f2Normal).normalize();
-      f1.setNormal(3, y3Normal.x, y3Normal.y, y3Normal.z);
-      f2.setNormal(2, y3Normal.x, y3Normal.y, y3Normal.z);*/
-      
+
       PVector y1Normal = f1Normal.add(f0Normal).add(f3Normal).add(f4Normal).normalize();
-      // 0 1 2 3 / 0 1 3 2 / 0 3 1 2 / 0 3 2 1 / 0 2 1 3 / 0 2 3 1 / 1 0 2 3
       f0.setNormal(1, y1Normal.x, y1Normal.y, y1Normal.z);
       f1.setNormal(0, y1Normal.x, y1Normal.y, y1Normal.z);
       f3.setNormal(2, y1Normal.x, y1Normal.y, y1Normal.z);
       f4.setNormal(3, y1Normal.x, y1Normal.y, y1Normal.z);
-      
-      /*
-      PVector y0Normal = f1Normal.add(f2Normal).add(f4Normal).add(f5Normal).normalize();
-      f1.setNormal(0, y0Normal.x, y0Normal.y, y0Normal.z);
-      f2.setNormal(1, y0Normal.x, y0Normal.y, y0Normal.z);
-      f4.setNormal(3, y0Normal.x, y0Normal.y, y0Normal.z);
-      f5.setNormal(2, y0Normal.x, y0Normal.y, y0Normal.z);*/
     }
   }
   

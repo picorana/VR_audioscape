@@ -2,23 +2,28 @@
 /* TODO:
 *  solve cracks in the road issue
 *  solve color + texture shader
-*  refactor & comment everything
-*  try plants
+*  add houses! and phone towers! and maybe plants!
 *  grass blades aren't removed when camera is too far
-*  I'd rethink the way the terrain is implemented:
+*  Terrain:
 *    - are we wasting resources by keeping an arraylist of PShapes? Is there a better way to do this?
 *    - better use a quad strip instead of custom PShapes?
 *  move every util function into util class?
+*  load configuration from json file?
+*  the normals of the terrain are wrong. meh.
+*
+*  Things I'd like to do in the future:
+*    - Put very far mountains in the background
 */
 
-import queasycam.*;
+//import queasycam.*;
 import java.util.*;
-//import processing.vr.*;
+import processing.vr.*;
 
-QueasyCam cam;
+//QueasyCam cam;
 PApplet sketchPApplet;
 boolean recording   = false;
 boolean grassEnabled = false;
+int colorScheme = 0;
 
 // Shader data
 PShader skyShader;
@@ -44,23 +49,21 @@ int cameraOffsetZ   = 2;
 // Memory management
 long freeMemory; 
 
+
 void settings(){
   smooth();
-  size(700, 700, P3D);
+  //size(700, 700, P3D);
+  fullScreen(STEREO);
 }
+
 
 void setup(){
   
   sketchPApplet = this;
   
-  cam = new QueasyCam(this);
-  //fullScreen(STEREO);
+  //cam = new QueasyCam(this);
   
-  skyShader = loadShader("sky7.glsl");
   fogShader = loadShader("fogfrag.glsl", "fogvert.glsl");
-  
-  //skyShader.set("iResolution", float(width), float(height));
-  //skyShader.set("iMouse", float(mouseX), float(mouseY));
   
   skybox = createShape(SPHERE, 1000);
   skybox.setFill(skyboxColor);
@@ -70,19 +73,17 @@ void setup(){
   
   fogShader.set("fogMinDistance", 700.0);
   fogShader.set("fogMaxDistance", 800.0);
-  setColorScheme(1);
+  setColorScheme(colorScheme);
+  terrain.startTerrain();
 }
 
 void draw() {
-  background(255);
-
-  shape(skybox);
-  
-  //filter(skyShader);
+  background(skyboxColor);
   
   cameraCenter();
   
-  curveValue += sin(frameCount/100.0)*.1; // move the curve according to a sine wave
+  // move the curve of the road according to a sine wave
+  curveValue += sin(frameCount/100.0)*.1; 
   
   terrain.display();
   
@@ -96,16 +97,21 @@ void draw() {
 }
 
 
+// function used to change the colors
+// 0 --> day, 1 --> night
 void setColorScheme(int colorScheme){
   if (colorScheme == 0){
     terrain.setColorScheme(color(204, 102, 0), color(173, 152, 122));
-    skybox.setFill(color(200, 200, 255));
-    fogShader.set("fogColor", 1, 0.96957, 0.88235);
+    skyboxColor = color(255, 255, 255);
+    skybox.setFill(skyboxColor);
+    fogShader.set("fogColor", 1.0, 1.0, 1.0);
+    fogShader.set("lightingEnabled", false);
   } else if (colorScheme == 1){
-    //terrain.setColorScheme(#0A252C, #325D66);
     terrain.setColorScheme(#0A252C, #0A252C);
-    skybox.setFill(color(50, 93, 102));
+    skyboxColor = color(50, 93, 102);
+    skybox.setFill(skyboxColor);
     fogShader.set("fogColor", 50.0/255, 93.0/255, 102.0/255);
+    fogShader.set("lightingEnabled", true);
   }
 }
 
@@ -126,16 +132,19 @@ void keyPressed(){
   }
 }
 
+
 // sets the camera to terrain center
 void cameraCenter(){
-  //cameraToOrigin();
+  cameraToOrigin();
   translate(- tile_length*strips_num*.5, 350, -cameraOffsetZ - strips_num*tile_length*1.5);
 }
+
 
 // sets the camera position to [0, 0, 0]
 void cameraToOrigin(){
   translate(((PGraphicsOpenGL)sketchPApplet.g).cameraX, ((PGraphicsOpenGL)sketchPApplet.g).cameraY, ((PGraphicsOpenGL)sketchPApplet.g).cameraZ);
 }
+
 
 // queries the memory of the phone to understand how much memory is the app using
 long getMemorySize() {
