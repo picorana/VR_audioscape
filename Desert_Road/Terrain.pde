@@ -163,7 +163,7 @@ class Terrain{
     
     prevVerts = tmpVerts;
     
-    recalculateNormals();
+    //recalculateNormals();
     
     return s;
   }

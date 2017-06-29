@@ -15,15 +15,15 @@
 *    - Put very far mountains in the background
 */
 
-//import queasycam.*;
+import queasycam.*;
 import java.util.*;
-import processing.vr.*;
+//import processing.vr.*;
 
-//QueasyCam cam;
+QueasyCam cam;
 PApplet sketchPApplet;
 boolean recording   = false;
 boolean grassEnabled = false;
-int colorScheme = 0;
+int colorScheme = 1;
 
 // Shader data
 PShader skyShader;
@@ -52,8 +52,8 @@ long freeMemory;
 
 void settings(){
   smooth();
-  //size(700, 700, P3D);
-  fullScreen(STEREO);
+  size(700, 700, P3D);
+  //fullScreen(STEREO);
 }
 
 
@@ -61,7 +61,7 @@ void setup(){
   
   sketchPApplet = this;
   
-  //cam = new QueasyCam(this);
+  cam = new QueasyCam(this);
   
   fogShader = loadShader("fogfrag.glsl", "fogvert.glsl");
   
@@ -135,7 +135,7 @@ void keyPressed(){
 
 // sets the camera to terrain center
 void cameraCenter(){
-  cameraToOrigin();
+  //cameraToOrigin();
   translate(- tile_length*strips_num*.5, 350, -cameraOffsetZ - strips_num*tile_length*1.5);
 }
 
