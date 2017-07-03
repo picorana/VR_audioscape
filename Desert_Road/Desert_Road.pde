@@ -4,6 +4,9 @@
 *  solve color + texture shader
 *  add houses! and phone towers! and maybe plants!
 *  grass blades aren't removed when camera is too far
+*  cacti aren't removed too
+*  uhh is the stroke around cacti nice?
+* 
 *  Terrain:
 *    - are we wasting resources by keeping an arraylist of PShapes? Is there a better way to do this?
 *    - better use a quad strip instead of custom PShapes?
@@ -13,17 +16,19 @@
 *
 *  Things I'd like to do in the future:
 *    - Put very far mountains in the background
+*
 */
 
-import queasycam.*;
+//import queasycam.*;
+import peasy.*;
 import java.util.*;
 //import processing.vr.*;
 
-QueasyCam cam;
+PeasyCam cam;
 PApplet sketchPApplet;
 boolean recording   = false;
 boolean grassEnabled = false;
-int colorScheme = 1;
+int colorScheme = 0;
 
 // Shader data
 PShader skyShader;
@@ -49,6 +54,7 @@ int cameraOffsetZ   = 2;
 // Memory management
 long freeMemory; 
 
+ArrayList<Cactus> cacti;
 
 void settings(){
   smooth();
@@ -61,24 +67,30 @@ void setup(){
   
   sketchPApplet = this;
   
-  cam = new QueasyCam(this);
+  cam = new PeasyCam(this, 1000);
+  cam.setMaximumDistance(500);
   
   fogShader = loadShader("fogfrag.glsl", "fogvert.glsl");
   
-  skybox = createShape(SPHERE, 1000);
-  skybox.setFill(skyboxColor);
-  skybox.setStroke(false);
+  //skybox = createShape(SPHERE, 1000);
+  //skybox.setFill(skyboxColor);
+  //skybox.setStroke(false);
+  skybox = createSkybox();
   
   terrain = new Terrain(tile_length, strips_length, strips_width, strips_num);
   
-  fogShader.set("fogMinDistance", 700.0);
-  fogShader.set("fogMaxDistance", 800.0);
+  fogShader.set("fogMinDistance", 800.0);
+  fogShader.set("fogMaxDistance", 900.0);
   setColorScheme(colorScheme);
   terrain.startTerrain();
+  
+  cacti = new ArrayList();
+  cacti.add(new Cactus(new PVector(0, 0, 0)));
 }
 
 void draw() {
   background(skyboxColor);
+  shape(skybox);
   
   cameraCenter();
   
@@ -87,10 +99,18 @@ void draw() {
   
   terrain.display();
   
+  for (int i=0; i<cacti.size(); i++){
+    cacti.get(i).display();
+  }
+  
+  if (random(0, 1)<.005) cacti.add(new Cactus(new PVector(-curveValue*tile_length, 0, cameraOffsetZ)));
+  if (random(0, 1)<.005) cacti.add(new Cactus(new PVector(-curveValue*tile_length + 600, 0, cameraOffsetZ)));
+  
   if (moving) cameraOffsetZ+=2;
   if (cameraOffsetZ%(strips_length*tile_length)<1) terrain.addStrip();
   
   if (shaderEnabled) shader(fogShader);
+  lights();
   
   //println(frameRate);
   if (recording && (frameCount%5)==0) saveFrame("line-######.png");
@@ -103,16 +123,80 @@ void setColorScheme(int colorScheme){
   if (colorScheme == 0){
     terrain.setColorScheme(color(204, 102, 0), color(173, 152, 122));
     skyboxColor = color(255, 255, 255);
-    skybox.setFill(skyboxColor);
+    //skybox.setFill(skyboxColor);
     fogShader.set("fogColor", 1.0, 1.0, 1.0);
     fogShader.set("lightingEnabled", false);
   } else if (colorScheme == 1){
     terrain.setColorScheme(#0A252C, #0A252C);
     skyboxColor = color(50, 93, 102);
-    skybox.setFill(skyboxColor);
+    //skybox.setFill(skyboxColor);
     fogShader.set("fogColor", 50.0/255, 93.0/255, 102.0/255);
     fogShader.set("lightingEnabled", true);
   }
+}
+
+
+PShape createSkybox(){
+  PShape p = createShape(BOX, 5000);
+  PShape s = createShape();
+  p.setFill(color(#7EB583));
+  s.beginShape(QUADS);
+  s.noStroke();
+  for (int i=0; i<p.getVertexCount(); i++){
+    PVector v = p.getVertex(i);
+    if (v.y<100) s.fill(color(#7EB583));
+    else s.fill(color(255, 255, 255));
+    s.vertex(v.x, v.y, v.z);
+  }
+  s.endShape();
+  return s;
+}
+
+
+PShape createSkybox2(){
+  PShape p = createShape();
+  p.beginShape();
+  p.fill(color(150, 0, 0));
+  // +Z "front" face
+  p.vertex(-1, -1,  1, 0, 0);
+  p.vertex( 1, -1,  1, 1, 0);
+  p.vertex( 1,  1,  1, 1, 1);
+  p.vertex(-1,  1,  1, 0, 1);
+
+  // -Z "back" face
+  p.vertex( 1, -1, -1, 0, 0);
+  p.vertex(-1, -1, -1, 1, 0);
+  p.vertex(-1,  1, -1, 1, 1);
+  p.vertex( 1,  1, -1, 0, 1);
+
+  // +Y "bottom" face
+  p.vertex(-1,  1,  1, 0, 0);
+  p.vertex( 1,  1,  1, 1, 0);
+  p.vertex( 1,  1, -1, 1, 1);
+  p.vertex(-1,  1, -1, 0, 1);
+
+  // -Y "top" face
+  p.vertex(-1, -1, -1, 0, 0);
+  p.vertex( 1, -1, -1, 1, 0);
+  p.vertex( 1, -1,  1, 1, 1);
+  p.vertex(-1, -1,  1, 0, 1);
+
+  // +X "right" face
+  p.vertex( 1, -1,  1, 0, 0);
+  p.vertex( 1, -1, -1, 1, 0);
+  p.vertex( 1,  1, -1, 1, 1);
+  p.vertex( 1,  1,  1, 0, 1);
+
+  // -X "left" face
+  p.vertex(-1, -1, -1, 0, 0);
+  p.vertex(-1, -1,  1, 1, 0);
+  p.vertex(-1,  1,  1, 1, 1);
+  p.vertex(-1,  1, -1, 0, 1);
+
+  endShape();
+  p.scale(5000);
+  //p.setStroke(false);
+  return p;
 }
 
 
@@ -135,7 +219,7 @@ void keyPressed(){
 
 // sets the camera to terrain center
 void cameraCenter(){
-  //cameraToOrigin();
+  cameraToOrigin();
   translate(- tile_length*strips_num*.5, 350, -cameraOffsetZ - strips_num*tile_length*1.5);
 }
 

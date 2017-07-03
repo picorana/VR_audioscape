@@ -53,7 +53,6 @@ void main() {
 
     }
     
-    
+    if (depth<2400) gl_FragColor = mix(gl_FragColor, vec4(fogColor, gl_FragColor.w), fogFactor);
 
-    gl_FragColor = mix(gl_FragColor, vec4(fogColor, gl_FragColor.w), fogFactor);
 } 

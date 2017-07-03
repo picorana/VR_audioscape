@@ -1,4 +1,5 @@
 import peasy.*;
+import queasycam.*;
 
 
 int leaf_number = 4;
@@ -12,6 +13,7 @@ PShape leaf;
 PShape curve;
 PShape cactus;
 PeasyCam cam;
+QueasyCam cam2;
 
 void setup(){
   size(600, 600, P3D);
@@ -21,12 +23,21 @@ void setup(){
     }
   }
 
-  cam = new PeasyCam(this, 1000);
+  cam = new PeasyCam(this, 500);
+  //cam2 = new QueasyCam(this);
 }
 
 void draw(){
   background(255);
-  shape(cactus);
+  rotateX(PI);
+  for (int i=0; i<10; i++){
+    for (int j=0; j<10; j++){
+      pushMatrix();
+      translate(i*200, 0, j*200);
+      shape(cacti[i][j]);
+      popMatrix();
+    }
+  }
 }
 
 PShape createCactus(){
@@ -75,8 +86,6 @@ PShape createLeaf(PVector origin, int leaf_length, int random_seed){
     float point_y = curvePoint(curve.getVertex(0).y, curve.getVertex(1).y, curve.getVertex(2).y, curve.getVertex(3).y, t);
     float this_noise_scale = leaf_noise_scale - abs(i-leaf_length/2);
     float rand_val = random(-10, 10);
-    color tmp_color = color(red(green) + rand_val, green(green) + rand_val, blue(green) + rand_val);
-    //leaf.fill(tmp_color);
     leaf.vertex(noise(i*leaf_noise_scale_internal + random_seed)*this_noise_scale + point_x + 10, point_y, rand_val);
   }
   
@@ -89,8 +98,6 @@ PShape createLeaf(PVector origin, int leaf_length, int random_seed){
     float point_y = curvePoint(curve.getVertex(0).y, curve.getVertex(1).y, curve.getVertex(2).y, curve.getVertex(3).y, t);
     float this_noise_scale = leaf_noise_scale - abs(i-leaf_length/2);
     float rand_val = random(-5, 5);
-    color tmp_color = color(red(green) + rand_val, green(green) + rand_val, blue(green) + rand_val);
-    //leaf.fill(tmp_color);
     leaf.vertex(-noise(i*leaf_noise_scale_internal + random_seed)*this_noise_scale + point_x - 10, point_y, rand_val);
   }
   
