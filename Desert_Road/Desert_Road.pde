@@ -20,11 +20,12 @@
 */
 
 //import queasycam.*;
-import peasy.*;
+//import peasy.*;
 import java.util.*;
-//import processing.vr.*;
+import processing.vr.*;
 
-PeasyCam cam;
+//QueasyCam cam;
+//PeasyCam cam;
 PApplet sketchPApplet;
 boolean recording   = false;
 boolean grassEnabled = false;
@@ -42,6 +43,8 @@ int tile_length     = 30;
 int strips_width    = 100;
 int strips_num      = 100;
 
+Dunes dunes;
+
 // Skybox data
 PShape skybox;
 color skyboxColor   = color(200, 200, 255);
@@ -58,8 +61,8 @@ ArrayList<Cactus> cacti;
 
 void settings(){
   smooth();
-  size(700, 700, P3D);
-  //fullScreen(STEREO);
+  //size(700, 700, P3D);
+  fullScreen(STEREO);
 }
 
 
@@ -67,30 +70,33 @@ void setup(){
   
   sketchPApplet = this;
   
-  cam = new PeasyCam(this, 1000);
-  cam.setMaximumDistance(500);
+  //cam = new QueasyCam(this);
+  //cam = new PeasyCam(this, 1000);
+  //cam.setMaximumDistance(500);
   
   fogShader = loadShader("fogfrag.glsl", "fogvert.glsl");
   
-  //skybox = createShape(SPHERE, 1000);
-  //skybox.setFill(skyboxColor);
-  //skybox.setStroke(false);
   skybox = createSkybox();
   
   terrain = new Terrain(tile_length, strips_length, strips_width, strips_num);
   
-  fogShader.set("fogMinDistance", 800.0);
-  fogShader.set("fogMaxDistance", 900.0);
+  fogShader.set("fogMinDistance", 900.0);
+  fogShader.set("fogMaxDistance", 1100.0);
   setColorScheme(colorScheme);
   terrain.startTerrain();
   
   cacti = new ArrayList();
   cacti.add(new Cactus(new PVector(0, 0, 0)));
+  
+  dunes = new Dunes();
 }
 
 void draw() {
+  println("framerate: " + frameRate);
+  
   background(skyboxColor);
   shape(skybox);
+  dunes.display();
   
   cameraCenter();
   
@@ -101,6 +107,10 @@ void draw() {
   
   for (int i=0; i<cacti.size(); i++){
     cacti.get(i).display();
+    if (abs(cacti.get(i).position.z - cameraOffsetZ) >=2000) {
+      println("removing cactus");
+      cacti.remove(i);
+    }
   }
   
   if (random(0, 1)<.005) cacti.add(new Cactus(new PVector(-curveValue*tile_length, 0, cameraOffsetZ)));
@@ -110,7 +120,6 @@ void draw() {
   if (cameraOffsetZ%(strips_length*tile_length)<1) terrain.addStrip();
   
   if (shaderEnabled) shader(fogShader);
-  lights();
   
   //println(frameRate);
   if (recording && (frameCount%5)==0) saveFrame("line-######.png");
@@ -124,7 +133,7 @@ void setColorScheme(int colorScheme){
     terrain.setColorScheme(color(204, 102, 0), color(173, 152, 122));
     skyboxColor = color(255, 255, 255);
     //skybox.setFill(skyboxColor);
-    fogShader.set("fogColor", 1.0, 1.0, 1.0);
+    fogShader.set("fogColor", 225/255.0, 211/255.0, 190/255.0);
     fogShader.set("lightingEnabled", false);
   } else if (colorScheme == 1){
     terrain.setColorScheme(#0A252C, #0A252C);
@@ -137,66 +146,21 @@ void setColorScheme(int colorScheme){
 
 
 PShape createSkybox(){
-  PShape p = createShape(BOX, 5000);
+  PShape p = createShape(BOX, 10000);
   PShape s = createShape();
   p.setFill(color(#7EB583));
   s.beginShape(QUADS);
   s.noStroke();
+  s.translate(0, -200);
   for (int i=0; i<p.getVertexCount(); i++){
     PVector v = p.getVertex(i);
     if (v.y<100) s.fill(color(#7EB583));
     else s.fill(color(255, 255, 255));
     s.vertex(v.x, v.y, v.z);
   }
+  s.scale(1, 0.8, 1);
   s.endShape();
   return s;
-}
-
-
-PShape createSkybox2(){
-  PShape p = createShape();
-  p.beginShape();
-  p.fill(color(150, 0, 0));
-  // +Z "front" face
-  p.vertex(-1, -1,  1, 0, 0);
-  p.vertex( 1, -1,  1, 1, 0);
-  p.vertex( 1,  1,  1, 1, 1);
-  p.vertex(-1,  1,  1, 0, 1);
-
-  // -Z "back" face
-  p.vertex( 1, -1, -1, 0, 0);
-  p.vertex(-1, -1, -1, 1, 0);
-  p.vertex(-1,  1, -1, 1, 1);
-  p.vertex( 1,  1, -1, 0, 1);
-
-  // +Y "bottom" face
-  p.vertex(-1,  1,  1, 0, 0);
-  p.vertex( 1,  1,  1, 1, 0);
-  p.vertex( 1,  1, -1, 1, 1);
-  p.vertex(-1,  1, -1, 0, 1);
-
-  // -Y "top" face
-  p.vertex(-1, -1, -1, 0, 0);
-  p.vertex( 1, -1, -1, 1, 0);
-  p.vertex( 1, -1,  1, 1, 1);
-  p.vertex(-1, -1,  1, 0, 1);
-
-  // +X "right" face
-  p.vertex( 1, -1,  1, 0, 0);
-  p.vertex( 1, -1, -1, 1, 0);
-  p.vertex( 1,  1, -1, 1, 1);
-  p.vertex( 1,  1,  1, 0, 1);
-
-  // -X "left" face
-  p.vertex(-1, -1, -1, 0, 0);
-  p.vertex(-1, -1,  1, 1, 0);
-  p.vertex(-1,  1,  1, 1, 1);
-  p.vertex(-1,  1, -1, 0, 1);
-
-  endShape();
-  p.scale(5000);
-  //p.setStroke(false);
-  return p;
 }
 
 
