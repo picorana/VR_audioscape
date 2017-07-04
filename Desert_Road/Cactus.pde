@@ -60,7 +60,7 @@ class Cactus{
     
     leaf.beginShape();
     leaf.fill(green);
-    //leaf.noStroke();
+    leaf.noStroke();
     
     leaf.vertex(origin.x, 0);
     
@@ -70,6 +70,7 @@ class Cactus{
       float point_y = curvePoint(curve.getVertex(0).y, curve.getVertex(1).y, curve.getVertex(2).y, curve.getVertex(3).y, t);
       float this_noise_scale = leaf_noise_scale - abs(i-leaf_length/2);
       float rand_val = random(-10, 10);
+      leaf.normal(-1, 0, 0);
       leaf.vertex(noise(i*leaf_noise_scale_internal + random_seed)*this_noise_scale + point_x + 10, point_y, rand_val);
     }
     
@@ -82,6 +83,7 @@ class Cactus{
       float point_y = curvePoint(curve.getVertex(0).y, curve.getVertex(1).y, curve.getVertex(2).y, curve.getVertex(3).y, t);
       float this_noise_scale = leaf_noise_scale - abs(i-leaf_length/2);
       float rand_val = random(-5, 5);
+      leaf.normal(-1, 0, 0);
       leaf.vertex(-noise(i*leaf_noise_scale_internal + random_seed)*this_noise_scale + point_x - 10, point_y, rand_val);
     }
     

@@ -14,9 +14,6 @@
 *  load configuration from json file?
 *  the normals of the terrain are wrong. meh.
 *
-*  Things I'd like to do in the future:
-*    - Put very far mountains in the background
-*
 */
 
 //import queasycam.*;
@@ -47,6 +44,7 @@ Dunes dunes;
 
 // Skybox data
 PShape skybox;
+boolean skyboxEnabled = true;
 color skyboxColor   = color(200, 200, 255);
 
 // Movement data
@@ -61,7 +59,7 @@ ArrayList<Cactus> cacti;
 
 void settings(){
   smooth();
-  //size(700, 700, P3D);
+  //size(1000, 700, P3D);
   fullScreen(STEREO);
 }
 
@@ -72,7 +70,7 @@ void setup(){
   
   //cam = new QueasyCam(this);
   //cam = new PeasyCam(this, 1000);
-  //cam.setMaximumDistance(500);
+  //cam.setMaximumDistance(50000);
   
   fogShader = loadShader("fogfrag.glsl", "fogvert.glsl");
   
@@ -95,7 +93,7 @@ void draw() {
   println("framerate: " + frameRate);
   
   background(skyboxColor);
-  shape(skybox);
+  if (skyboxEnabled) shape(skybox);
   dunes.display();
   
   cameraCenter();
@@ -136,8 +134,9 @@ void setColorScheme(int colorScheme){
     fogShader.set("fogColor", 225/255.0, 211/255.0, 190/255.0);
     fogShader.set("lightingEnabled", false);
   } else if (colorScheme == 1){
-    terrain.setColorScheme(#0A252C, #0A252C);
+    terrain.setColorScheme(#185768, #308096);
     skyboxColor = color(50, 93, 102);
+    skyboxEnabled = true;
     //skybox.setFill(skyboxColor);
     fogShader.set("fogColor", 50.0/255, 93.0/255, 102.0/255);
     fogShader.set("lightingEnabled", true);
@@ -146,7 +145,7 @@ void setColorScheme(int colorScheme){
 
 
 PShape createSkybox(){
-  PShape p = createShape(BOX, 10000);
+  PShape p = createShape(BOX, 9000);
   PShape s = createShape();
   p.setFill(color(#7EB583));
   s.beginShape(QUADS);

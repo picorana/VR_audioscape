@@ -18,7 +18,7 @@ uniform bool lightingEnabled;
 
 void main() {
 
-    vec4 ambient = vec4(0.1, 0.1, 0.1, 0.1);
+    vec4 ambient = vec4(vertColor.x*.5, vertColor.y*.5, vertColor.z*.5, 1) ;
 
     vec3 vertLightDir = vec3(0, -0.5, 1);
 
@@ -53,6 +53,7 @@ void main() {
 
     }
     
-    if (depth<2400.0) gl_FragColor = mix(gl_FragColor, vec4(fogColor, gl_FragColor.w), fogFactor);
+    if (depth<2400.0 && lightingEnabled) gl_FragColor = mix(gl_FragColor, vec4(fogColor, gl_FragColor.w), fogFactor);
+    else if (depth<2000.0) gl_FragColor = mix(gl_FragColor, vec4(fogColor, gl_FragColor.w), fogFactor);
 
 } 
