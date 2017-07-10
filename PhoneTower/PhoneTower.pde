@@ -27,7 +27,7 @@ PShape multipleFace(){
       if (i==2) newFace.translate(-scale*2, scale*j, -scale*2);
       if (i==3) newFace.translate(0, scale*j, -scale*2);
       newFace.rotateY(PI/2*i);
-      newFace.rotateX(PI*j);
+      //newFace.rotateX(PI*j);
       s.addChild(newFace);
     }
   }
