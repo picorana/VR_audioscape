@@ -33,7 +33,7 @@ void draw(){
 }
 
 void drawRects(byte[] mBytes){
-  int mDivisions = 3; //?
+  int mDivisions = 16; //?
   boolean mTop = true;
   float[] mFFTPoints = new float[mBytes.length * 4 + 3];
   
@@ -58,8 +58,9 @@ void drawRects(byte[] mBytes){
     }
 
   stroke(255);
-  for (int i=0; i<mFFTPoints.length; i++){
-    line(i, mFFTPoints[i]*10, i, 0);
+  float linewidth = width/mFFTPoints.length;
+  for (int i=0; i<mFFTPoints.length/4; i++){
+    line(i, mFFTPoints[i * 4 + 3]*10, i, 0);
   }
     
 }
