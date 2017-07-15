@@ -33,12 +33,11 @@ void settings(){
 
 void setup(){
   sketchPApplet = this;
-  requestPermission("android.permission.RECORD_AUDIO");
-  requestPermission("android.permission.MODIFY_AUDIO_SETTINGS");
-  //init2();
+  requestPermission("android.permission.RECORD_AUDIO", "permissionCallback");
+
   terrain = new Terrain(tile_length, strips_length, strips_width, strips_num);
   terrain.startTerrain();
-  ma = new MusicAnalyzer();
+  
   
   cacti = new ArrayList();
   cacti.add(new Cactus(new PVector(0, 0, 0)));
@@ -46,13 +45,8 @@ void setup(){
 
 void draw(){
   background(0);
-
-  //if (mBytesFFT != null) drawRects(mBytesFFT);
-  //translate(0, height/2);
-  //if (mBytes != null) drawRects(mBytes);
-
+  
   cameraCenter();
-  //lights();
   
   for (int i=0; i<cacti.size(); i++){
     cacti.get(i).display();
@@ -62,11 +56,8 @@ void draw(){
     }
   }
 
-  terrain.addMusicStrip(ma.analyze());
+  if (hasPermission("RECORD_AUDIO")) terrain.addMusicStrip(ma.analyze());
   terrain.display();
-  
-  
-  
   
   if (moving) cameraOffsetZ+=tile_length;
 }
@@ -114,6 +105,11 @@ float[] drawRects(byte[] mBytes){
     
 }
 
+void permissionCallback(boolean granted){
+  if (granted){
+    ma = new MusicAnalyzer();
+  }
+}
 
 public void init2(){
   mVisualizer = new Visualizer(0);

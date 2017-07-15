@@ -169,6 +169,60 @@ class Terrain{
   }
   
   
+  void addMusicStrip(float[] mBytes){
+    strips.add(createMusicStrip(mBytes));
+    strip_index++;
+    if (strips.size()>strips_num){
+      strips.remove(0);
+    }
+  }
+  
+  PShape createMusicStrip(float[] mBytes){
+    colorMode(RGB, 255);
+    
+    ArrayList<PVector> tmpVerts = new ArrayList();
+    
+    PShape s = createShape(GROUP);
+    for (int i=0; i<strips_width; i++){
+      
+      PShape r = createShape();
+      r.beginShape();
+
+      float road_center = strips_width/2 + curveValue;
+      float dist = abs(road_center - i);
+      y_scale =  300/(1+pow((float)Math.E, -dist*0.5 + 10)); // sigmoid equation
+      
+      float y0 = prevVerts.get(i).x;
+      float y1 = prevVerts.get(i).y;
+      int mBytesIndex = (int) map(i, 0, strips_width, 0, mBytes.length);
+      float y2 = mBytes[mBytesIndex] + 300/**abs(strips_width/2 - i)*0.1*/;
+      float y3 = prev_y2;
+
+      r.noStroke();   
+
+      r.fill(lerpColor(from, to, -y2/y_scale), 255);   
+      
+      r.vertex(i*tile_length, y0, 0); // 0
+      r.vertex(i*tile_length + tile_length, y1, 0); // 1
+      r.vertex(i*tile_length + tile_length, y2, tile_length/4); // 2
+      r.vertex(i*tile_length, y3, tile_length/4); // 3
+
+      r.endShape(CLOSE);
+      s.addChild(r);
+      
+      tmpVerts.add(new PVector(y3, y2));
+      
+      prev_y1 = y1;
+      prev_y2 = y2;
+
+    }
+    
+    prevVerts = tmpVerts;
+    
+    return s;
+  }
+  
+  
   void addGrass(float vert_height, int index){
     if (vert_height>-50 && random(0, 1)<.1 && (index<strips_width/2 +curveValue -5 || index> strips_width/2 +curveValue + 5)) {
       grass.add(new Blade(new PVector(index*tile_length, vert_height - 5, strip_index*tile_length), 5));
