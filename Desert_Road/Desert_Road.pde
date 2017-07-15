@@ -19,7 +19,10 @@
 //import queasycam.*;
 //import peasy.*;
 import java.util.*;
+
 import processing.vr.*;
+import android.media.MediaPlayer;
+import android.media.audiofx.Visualizer;
 
 //QueasyCam cam;
 //PeasyCam cam;
@@ -66,6 +69,8 @@ void settings(){
 
 void setup(){
   
+  
+  
   sketchPApplet = this;
   
   //cam = new QueasyCam(this);
@@ -103,19 +108,20 @@ void draw() {
   
   terrain.display();
   
-  for (int i=0; i<cacti.size(); i++){
+  /*for (int i=0; i<cacti.size(); i++){
     cacti.get(i).display();
     if (abs(cacti.get(i).position.z - cameraOffsetZ) >=2000) {
       println("removing cactus");
       cacti.remove(i);
     }
-  }
+  }*/
   
-  if (random(0, 1)<.005) cacti.add(new Cactus(new PVector(-curveValue*tile_length, 0, cameraOffsetZ)));
-  if (random(0, 1)<.005) cacti.add(new Cactus(new PVector(-curveValue*tile_length + 600, 0, cameraOffsetZ)));
+  //if (random(0, 1)<.005) cacti.add(new Cactus(new PVector(-curveValue*tile_length, 0, cameraOffsetZ)));
+  //if (random(0, 1)<.005) cacti.add(new Cactus(new PVector(-curveValue*tile_length + 600, 0, cameraOffsetZ)));
   
-  if (moving) cameraOffsetZ+=2;
-  if (cameraOffsetZ%(strips_length*tile_length)<1) terrain.addStrip();
+  if (moving) cameraOffsetZ+=tile_length;
+  terrain.addStrip();
+  //if (cameraOffsetZ%(strips_length*tile_length)<1) terrain.addStrip();
   
   if (shaderEnabled) shader(fogShader);
   
