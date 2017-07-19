@@ -34,14 +34,14 @@ int colorScheme = 0;
 // Shader data
 PShader skyShader;
 PShader fogShader;
-boolean shaderEnabled = true;
+boolean shaderEnabled = false;
 
 // Terrain data
 Terrain terrain;
 int strips_length   = 1;
-int tile_length     = 30;
-int strips_width    = 100;
-int strips_num      = 100;
+int tile_length     = 50;
+int strips_width    = 60;
+int strips_num      = 80;
 
 Dunes dunes;
 
@@ -60,6 +60,10 @@ long freeMemory;
 
 ArrayList<Cactus> cacti;
 
+MusicAnalyzer ma;
+Visualizer mVisualizer;
+boolean recordAudioPermission = false;
+
 void settings(){
   smooth();
   //size(1000, 700, P3D);
@@ -69,7 +73,7 @@ void settings(){
 
 void setup(){
   
-  
+  requestPermission("android.permission.RECORD_AUDIO", "permissionCallback");
   
   sketchPApplet = this;
   
@@ -83,8 +87,8 @@ void setup(){
   
   terrain = new Terrain(tile_length, strips_length, strips_width, strips_num);
   
-  fogShader.set("fogMinDistance", 900.0);
-  fogShader.set("fogMaxDistance", 1100.0);
+  fogShader.set("fogMinDistance", 1100.0);
+  fogShader.set("fogMaxDistance", 1300.0);
   setColorScheme(colorScheme);
   terrain.startTerrain();
   
@@ -95,7 +99,7 @@ void setup(){
 }
 
 void draw() {
-  println("framerate: " + frameRate);
+  //println("framerate: " + frameRate);
   
   background(skyboxColor);
   if (skyboxEnabled) shape(skybox);
@@ -104,28 +108,28 @@ void draw() {
   cameraCenter();
   
   // move the curve of the road according to a sine wave
-  curveValue += sin(frameCount/100.0)*.1; 
+  curveValue += sin(frameCount/20.0)*.2; 
   
   terrain.display();
   
-  /*for (int i=0; i<cacti.size(); i++){
+  for (int i=0; i<cacti.size(); i++){
     cacti.get(i).display();
     if (abs(cacti.get(i).position.z - cameraOffsetZ) >=2000) {
-      println("removing cactus");
+      println("removing cactus x:" + cacti.get(i).position.x);
       cacti.remove(i);
     }
-  }*/
+  }
   
-  //if (random(0, 1)<.005) cacti.add(new Cactus(new PVector(-curveValue*tile_length, 0, cameraOffsetZ)));
+  //if (random(0, 1)<.015) cacti.add(new Cactus(new PVector(-curveValue*tile_length, 0, cameraOffsetZ)));
   //if (random(0, 1)<.005) cacti.add(new Cactus(new PVector(-curveValue*tile_length + 600, 0, cameraOffsetZ)));
   
   if (moving) cameraOffsetZ+=tile_length;
-  terrain.addStrip();
+  if (recordAudioPermission) terrain.addMusicStrip(ma.analyze());
+
   //if (cameraOffsetZ%(strips_length*tile_length)<1) terrain.addStrip();
   
   if (shaderEnabled) shader(fogShader);
   
-  //println(frameRate);
   if (recording && (frameCount%5)==0) saveFrame("line-######.png");
 }
 
@@ -189,7 +193,7 @@ void keyPressed(){
 // sets the camera to terrain center
 void cameraCenter(){
   cameraToOrigin();
-  translate(- tile_length*strips_num*.5, 350, -cameraOffsetZ - strips_num*tile_length*1.5);
+  translate(- tile_length*strips_num*.5 - curveValue*tile_length, 350, -cameraOffsetZ - strips_num*tile_length*1.5);
 }
 
 
@@ -216,4 +220,11 @@ long getMemorySize() {
     e.printStackTrace();
   }
   return freeSize;
+}
+
+void permissionCallback(boolean granted){
+  if (granted){
+    ma = new MusicAnalyzer();
+    recordAudioPermission = true;
+  }
 }

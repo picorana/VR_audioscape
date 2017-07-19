@@ -22,6 +22,7 @@ byte[] mBytesFFT;
 
 PApplet sketchPApplet;
 MusicAnalyzer ma;
+boolean record_audio_permission = false;
 
 ArrayList<Cactus> cacti;
 
@@ -56,7 +57,7 @@ void draw(){
     }
   }
 
-  if (hasPermission("RECORD_AUDIO")) terrain.addMusicStrip(ma.analyze());
+  if (record_audio_permission) terrain.addMusicStrip(ma.analyze());
   terrain.display();
   
   if (moving) cameraOffsetZ+=tile_length;
@@ -108,6 +109,7 @@ float[] drawRects(byte[] mBytes){
 void permissionCallback(boolean granted){
   if (granted){
     ma = new MusicAnalyzer();
+    record_audio_permission = true;
   }
 }
 

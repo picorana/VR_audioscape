@@ -2,6 +2,10 @@ class MusicAnalyzer{
   PFont font;
   FFT fft;
   
+  int status = -1;
+  int capSize;
+  int capRate;
+  
   float[] toDraw;
   
   int colorChooser = 0;                                          //initilizes a bunch of variables
@@ -67,11 +71,11 @@ class MusicAnalyzer{
   byte[] mBytesFFT;
   byte[] mBytes;
   
+  Visualizer mVisualizer;
+  
   MusicAnalyzer(){
     init();
     
-    
-  
     for (int i = 0; i < beatBands; i += 1) {
       count[i] = 0;
       totalLong[i] = 0;
@@ -213,7 +217,7 @@ class MusicAnalyzer{
     if (beat > threshold & beatCounter > 5) {
       //println(beatCounter);
       beatCounter = 0;
-      cacti.add(new Cactus(new PVector(-curveValue*tile_length, 0, cameraOffsetZ-200)));
+      cacti.add(new Cactus(new PVector(-curveValue*tile_length, 0, cameraOffsetZ+1800)));
     }
     /////////////////////////////////////////////////////Calculate beat spreads///////////////////////////////////////////////////////////////////////////////////////////
   
@@ -261,7 +265,7 @@ class MusicAnalyzer{
       rect(i*((width-90)/beatBands) + (((width-90)/beatBands)/2), height, i*((width-90)/beatBands)+((width-90)/beatBands), height - totalLong[i]);                      //Long term intensity
       rect(i*((width-90)/beatBands) + (((width-90)/beatBands)/2), height - totalLong[i]*c[i]-2, i*((width-90)/beatBands)+((width-90)/beatBands), height - totalLong[i]*c[i]+2);      //threshold
       //if (count[i] < 4) rect(i*((width-90)/beatBands) + (((width-90)/beatBands)/2), 0, i*((width-90)/beatBands)+((width-90)/beatBands), 15);
-      toDraw[i] = - totalLong[i]*c[i];
+      toDraw[i] = - totalLong[i];
     }
   
     if (beatCounter < 5) rect(width - 50, 0, width, 50);  //beat indication box

@@ -5,7 +5,7 @@ class Dunes{
   int numMountainsFirstRow = 1;
   int numMountainsSecondRow = 1;
   int mountainHeight = 100;
-  int distance = 2500;
+  int distance = 3000;
   
   color c1, c2;
   

@@ -18,6 +18,7 @@ class Terrain{
   // Variables to keep track of the evolution of the terrain
   int strip_index = 0;
   float prev_y1 = 0, prev_y2 = 0;
+  float max_y2 = 0;
   PShape lastStrip;
   PVector prevFaceNormal = new PVector(0, 0, 0);
   ArrayList<PVector> prevFaceNormals = new ArrayList();
@@ -136,11 +137,12 @@ class Terrain{
       float y0 = prevVerts.get(i).x;
       float y1 = prevVerts.get(i).y;
       float y2 = -noise((i*tile_length+tile_length)*noiseScale, (strip_index*tile_length+tile_length)*noiseScale)*y_scale;
+
       float y3 = prev_y2;
 
       r.noStroke();   
 
-      r.fill(lerpColor(from, to, -y2/y_scale), 255);   
+      r.fill(lerpColor(from, to, map(y2, 0, -255, 0, 1)), 255);   
       
       r.vertex(i*tile_length, y0, 0); // 0
       r.vertex(i*tile_length + tile_length, y1, 0); // 1
@@ -171,9 +173,12 @@ class Terrain{
   
   void addMusicStrip(float[] mBytes){
     strips.add(createMusicStrip(mBytes));
+    road.update();
     strip_index++;
-    if (strips.size()>strips_num){
+    if (strips.size()>strips_num) {
       strips.remove(0);
+      road.road.remove(0);
+      road.roadBorders.remove(0);
     }
   }
   
@@ -190,22 +195,23 @@ class Terrain{
 
       float road_center = strips_width/2 + curveValue;
       float dist = abs(road_center - i);
-      y_scale =  300/(1+pow((float)Math.E, -dist*0.5 + 10)); // sigmoid equation
+      y_scale =  0.001*300/(1+pow((float)Math.E, -dist*0.5 + 10)); // sigmoid equation
       
       float y0 = prevVerts.get(i).x;
       float y1 = prevVerts.get(i).y;
-      int mBytesIndex = (int) map(i, 0, strips_width, 0, mBytes.length);
-      float y2 = mBytes[mBytesIndex] + 300/**abs(strips_width/2 - i)*0.1*/;
+      int mBytesIndex = (int) map(i, 0, strips_width, 1, mBytes.length);
+      float y2 = -pow((mBytes[mBytesIndex]*0.25), 2)*y_scale /*+ 8*(mBytes[0]+400)*y_scale*/;
+      if (abs(y2)>abs(max_y2)) { max_y2 = y2; println(max_y2); }
       float y3 = prev_y2;
 
       r.noStroke();   
 
-      r.fill(lerpColor(from, to, -y2/y_scale), 255);   
+      r.fill(lerpColor(from, to, map(y2, 0, max_y2, 0, 1)), 255);   
       
       r.vertex(i*tile_length, y0, 0); // 0
       r.vertex(i*tile_length + tile_length, y1, 0); // 1
-      r.vertex(i*tile_length + tile_length, y2, tile_length/4); // 2
-      r.vertex(i*tile_length, y3, tile_length/4); // 3
+      r.vertex(i*tile_length + tile_length, y2, tile_length); // 2
+      r.vertex(i*tile_length, y3, tile_length); // 3
 
       r.endShape(CLOSE);
       s.addChild(r);
