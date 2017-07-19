@@ -99,7 +99,7 @@ void setup(){
 }
 
 void draw() {
-  //println("framerate: " + frameRate);
+  println("framerate: " + frameRate);
   
   background(skyboxColor);
   if (skyboxEnabled) shape(skybox);
@@ -115,7 +115,7 @@ void draw() {
   for (int i=0; i<cacti.size(); i++){
     cacti.get(i).display();
     if (abs(cacti.get(i).position.z - cameraOffsetZ) >=2000) {
-      println("removing cactus x:" + cacti.get(i).position.x);
+      //println("removing cactus x:" + cacti.get(i).position.x);
       cacti.remove(i);
     }
   }
@@ -193,7 +193,7 @@ void keyPressed(){
 // sets the camera to terrain center
 void cameraCenter(){
   cameraToOrigin();
-  translate(- tile_length*strips_num*.5 - curveValue*tile_length, 350, -cameraOffsetZ - strips_num*tile_length*1.5);
+  translate(- tile_length*strips_num*.5 /*- curveValue*tile_length*2*/, 350, -cameraOffsetZ - strips_num*tile_length*1.5);
 }
 
 

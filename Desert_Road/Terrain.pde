@@ -201,7 +201,7 @@ class Terrain{
       float y1 = prevVerts.get(i).y;
       int mBytesIndex = (int) map(i, 0, strips_width, 1, mBytes.length);
       float y2 = -pow((mBytes[mBytesIndex]*0.25), 2)*y_scale /*+ 8*(mBytes[0]+400)*y_scale*/;
-      if (abs(y2)>abs(max_y2)) { max_y2 = y2; println(max_y2); }
+      if (abs(y2)>abs(max_y2))  max_y2 = y2; 
       float y3 = prev_y2;
 
       r.noStroke();   
