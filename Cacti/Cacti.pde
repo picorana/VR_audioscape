@@ -17,8 +17,8 @@ QueasyCam cam2;
 
 void setup(){
   size(600, 600, P3D);
-  for (int i=0; i<10; i++){
-    for (int j=0; j<10; j++){
+  for (int i=0; i<3; i++){
+    for (int j=0; j<3; j++){
       cacti[i][j] = createCactus();
     }
   }
@@ -30,10 +30,10 @@ void setup(){
 void draw(){
   background(255);
   rotateX(PI);
-  for (int i=0; i<10; i++){
-    for (int j=0; j<10; j++){
+  for (int i=0; i<3; i++){
+    for (int j=0; j<3; j++){
       pushMatrix();
-      translate(i*200, 0, j*200);
+      translate(i*150, j*150, 0);
       shape(cacti[i][j]);
       popMatrix();
     }
@@ -41,6 +41,122 @@ void draw(){
 }
 
 PShape createCactus(){
+  int sides = 51;
+  float h = 100;
+  float radius = 10;
+  float angle = 360 / sides;
+  float halfHeight = h / 2;
+  int topNumComponents = 4;
+  
+  PShape g = createShape(GROUP);
+  
+  // CACTUS BODY
+  PShape r = createShape();
+  r.beginShape(QUAD_STRIP);
+  r.noStroke();
+  for (int i = 0; i < sides + 1; i++) {
+      float this_radius = radius;
+      r.fill(color(0, 150, 0));
+      if (i%3==0){
+        this_radius += 10;
+        r.fill(color(255, 200, 0));
+      }
+      float x = cos( radians( i * angle ) ) * this_radius;
+      float y = sin( radians( i * angle ) ) * this_radius;
+      r.vertex( x, y, halfHeight);
+      r.vertex( x, y, -halfHeight);    
+  }
+  r.endShape(CLOSE);
+  //g.addChild(r);
+  
+  //CACTUS TOP
+  /*float last_h = 0;
+  int b = 50;
+  for (int i=0; i<topNumComponents; i++){
+    g.addChild(createCutCone(sides, b, radius*.25, radius, (last_h-10*i)*i));
+    last_h = b;
+    b = b-10;
+    radius = radius*.25;
+  }*/
+  g.addChild(createHemisphere(g));
+
+  return g;
+}
+
+PShape createHemisphere(PShape group){
+  float radius = random(20, 50.0);
+  float rho = radius;
+  float factor = TWO_PI/20.0;
+  float x, y, z;
+
+  PShape s = createShape();
+  for(float phi = 0.0; phi < PI; phi += factor) {
+    s.beginShape(QUAD_STRIP);
+    s.noStroke();
+    for(float theta = 0.0; theta < TWO_PI + factor; theta += factor) {
+      if (theta%.2<.1) {
+        rho = radius + 10;
+        s.fill(color(255, 255, 0));
+        if (random(0, 1)<.5){
+          PShape r = createShape(SPHERE, 1);
+          r.setFill(255);
+          r.translate(rho * sin(phi) * cos(theta), rho * sin(phi) * sin(theta), rho * cos(phi));
+          group.addChild(r);
+        }
+        
+      }
+      else {
+        rho = radius;
+        s.fill(color(100, 200, 100));
+      }
+      x = rho * sin(phi) * cos(theta);
+      y = rho * sin(phi) * sin(theta);
+      z = rho * cos(phi);
+      s.vertex(x, y, z);
+      
+      x = rho * sin(phi + factor) * cos(theta);
+      y = rho * sin(phi + factor) * sin(theta);
+      z = rho * cos(phi + factor);
+      s.vertex(x, y, z);
+    }
+    s.endShape(CLOSE);
+  }
+  return s;
+}
+
+PShape createCutCone(int sides, float h, float r1, float r2, float y_translation){
+  PShape r = createShape();
+  float angle = 360 / sides;
+  float halfHeight = h / 2;
+
+  r.beginShape(QUAD_STRIP);
+  //r.noStroke();
+  
+  for (int i = 0; i < sides + 1; i++) {
+
+    float this_radius1 = r1;
+    float this_radius2 = r2;
+    
+      r.fill(color(0, 150, 0));
+      if (i%3==0){
+        this_radius1 += 10;
+        this_radius2 += 10;
+        r.fill(color(255, 200, 0));
+      }
+      
+      float x1 = cos( radians( i * angle ) ) * this_radius1;
+      float y1 = sin( radians( i * angle ) ) * this_radius1;
+      float x2 = cos( radians( i * angle ) ) * this_radius2;
+      float y2 = sin( radians( i * angle ) ) * this_radius2;
+      r.vertex( x1, y1, -halfHeight - y_translation);
+      r.vertex( x2, y2, halfHeight - y_translation);
+  }
+  r.endShape(CLOSE);
+    
+  return r;
+}
+
+PShape createCactus1(){
   PShape cactus = createShape(GROUP);
   for (int i=0; i<leaf_number; i++){
     PShape leaf = createLeaf(new PVector(random(-10, 10), 0), (int)random(10, 30), (int)random(0, 100));
