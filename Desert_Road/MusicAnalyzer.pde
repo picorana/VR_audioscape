@@ -217,7 +217,7 @@ class MusicAnalyzer{
     if (beat > threshold & beatCounter > 5) {
       //println(beatCounter);
       beatCounter = 0;
-      cacti.add(new Cactus(new PVector(-curveValue*tile_length, 0, cameraOffsetZ+1800)));
+      details.addCactus(new PVector(-curveValue*tile_length, 0, cameraOffsetZ+1800));
     }
     /////////////////////////////////////////////////////Calculate beat spreads///////////////////////////////////////////////////////////////////////////////////////////
   

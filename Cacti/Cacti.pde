@@ -41,7 +41,7 @@ void draw(){
 }
 
 PShape createCactus(){
-  int sides = 51;
+  int sides = 101;
   float h = 100;
   float radius = 10;
   float angle = 360 / sides;
@@ -58,7 +58,7 @@ PShape createCactus(){
       float this_radius = radius;
       r.fill(color(0, 150, 0));
       if (i%3==0){
-        this_radius += 10;
+        this_radius += 5;
         r.fill(color(255, 200, 0));
       }
       float x = cos( radians( i * angle ) ) * this_radius;
@@ -85,40 +85,50 @@ PShape createCactus(){
 
 PShape createHemisphere(PShape group){
   float radius = random(20, 50.0);
+  float tallness = random(1, 3);
   float rho = radius;
-  float factor = TWO_PI/20.0;
+  float factor = TWO_PI/40.0;
   float x, y, z;
+  
+  float green_r_component = random(50, 150);
+  float green_g_component = random(150, 200);
+  float green_b_component = random(50, 150);
 
   PShape s = createShape();
   for(float phi = 0.0; phi < PI; phi += factor) {
     s.beginShape(QUAD_STRIP);
     s.noStroke();
+    
     for(float theta = 0.0; theta < TWO_PI + factor; theta += factor) {
-      if (theta%.2<.1) {
-        rho = radius + 10;
-        s.fill(color(255, 255, 0));
+      
+      if (theta%.1<.05) {
+        rho = radius + 5;
+        s.fill(color(255, 255, 150));
         if (random(0, 1)<.5){
-          PShape r = createShape(SPHERE, 1);
-          r.setFill(255);
-          r.translate(rho * sin(phi) * cos(theta), rho * sin(phi) * sin(theta), rho * cos(phi));
+          sphereDetail(1);
+          PShape r = createShape(SPHERE, 1.5);
+          r.setFill(color(150, 150, 150));
+          r.setStroke(false);
+          r.translate(rho * sin(phi) * cos(theta), rho * sin(phi) * sin(theta), rho * cos(phi)*tallness*phi*.25);
           group.addChild(r);
         }
         
-      }
-      else {
+      } else {
         rho = radius;
-        s.fill(color(100, 200, 100));
+        s.fill(color(green_r_component, green_g_component, green_b_component));
       }
+      
       x = rho * sin(phi) * cos(theta);
       y = rho * sin(phi) * sin(theta);
-      z = rho * cos(phi);
+      z = rho * cos(phi)* tallness*abs(phi*.5)*.5;
       s.vertex(x, y, z);
       
       x = rho * sin(phi + factor) * cos(theta);
       y = rho * sin(phi + factor) * sin(theta);
-      z = rho * cos(phi + factor);
+      z = rho * cos(phi + factor) * tallness*abs((phi+factor)*.5)*.5;
       s.vertex(x, y, z);
     }
+    //s.translate(0, 0, -tallness*radius/2);
     s.endShape(CLOSE);
   }
   return s;
