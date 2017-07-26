@@ -19,7 +19,7 @@ void setup(){
   size(600, 600, P3D);
   for (int i=0; i<3; i++){
     for (int j=0; j<3; j++){
-      cacti[i][j] = createCactus();
+      cacti[i][j] = createMickeyCactus();
     }
   }
 
@@ -28,10 +28,11 @@ void setup(){
 }
 
 void draw(){
+  //lights();
   background(255);
   rotateX(PI);
-  for (int i=0; i<3; i++){
-    for (int j=0; j<3; j++){
+  for (int i=0; i<1; i++){
+    for (int j=0; j<1; j++){
       pushMatrix();
       translate(i*150, j*150, 0);
       shape(cacti[i][j]);
@@ -46,7 +47,6 @@ PShape createCactus(){
   float radius = 10;
   float angle = 360 / sides;
   float halfHeight = h / 2;
-  int topNumComponents = 4;
   
   PShape g = createShape(GROUP);
   
@@ -69,15 +69,6 @@ PShape createCactus(){
   r.endShape(CLOSE);
   //g.addChild(r);
   
-  //CACTUS TOP
-  /*float last_h = 0;
-  int b = 50;
-  for (int i=0; i<topNumComponents; i++){
-    g.addChild(createCutCone(sides, b, radius*.25, radius, (last_h-10*i)*i));
-    last_h = b;
-    b = b-10;
-    radius = radius*.25;
-  }*/
   g.addChild(createHemisphere(g));
 
   return g;
@@ -109,6 +100,7 @@ PShape createHemisphere(PShape group){
           PShape r = createShape(SPHERE, 1.5);
           r.setFill(color(150, 150, 150));
           r.setStroke(false);
+          //r.scale(sin(phi)*cos(theta)*5, sin(phi)*sin(theta)*5, cos(phi)*5);
           r.translate(rho * sin(phi) * cos(theta), rho * sin(phi) * sin(theta), rho * cos(phi)*tallness*phi*.25);
           group.addChild(r);
         }
@@ -128,8 +120,62 @@ PShape createHemisphere(PShape group){
       z = rho * cos(phi + factor) * tallness*abs((phi+factor)*.5)*.5;
       s.vertex(x, y, z);
     }
-    //s.translate(0, 0, -tallness*radius/2);
     s.endShape(CLOSE);
+  }
+  return s;
+}
+
+PShape createMickeyCactus(){
+  PShape g = createShape(GROUP);
+  float radius = random(20, 60.0);
+  float tallness = random(1, 2.5);
+  float rotationX = random(-0.0, 0.0);
+  g.addChild(createMickeyPart(radius, tallness, rotationX, new PVector(0, 0, 0)));
+  recursiveMickey(g, (int)random(1, 1), new PVector(0, 0, tallness*radius/8), radius, tallness);
+  return g;}
+
+void recursiveMickey(PShape group, int n, PVector prev_translation, float prev_radius, float prev_tallness){
+  if (n==0) return;
+  int num_children = 3;
+  for (int i=0; i<num_children; i++){
+      float radius = random(20, prev_radius/2);
+      float tallness = random(1, prev_tallness);
+      float rotationX = random(-0.0, 0.0);
+      float angle = PI/(num_children-1);
+      PVector translation_vector = new PVector(prev_translation.x , cos(i*angle)*radius/4, abs(cos(i*angle)*radius/4));
+      group.addChild(createMickeyPart(radius, tallness, rotationX, translation_vector));
+      recursiveMickey(group, n-1, new PVector(prev_translation.x + prev_translation.x*i*2, 0, prev_translation.z + tallness*radius/8), radius, tallness);
+  }
+
+}
+
+PShape createMickeyPart(float radius, float tallness, float rotationX, PVector position){
+  float rho = radius;
+  float factor = TWO_PI/20.0;
+  float x, y, z;
+
+  PShape s = createShape();
+  for(float phi = 0.0; phi < PI; phi += factor) {
+    s.beginShape(QUAD_STRIP);
+    s.noStroke();
+    s.fill(150, 200, 0);
+    
+    for(float theta = 0.0; theta < TWO_PI + factor; theta += factor) {
+      
+      x = rho * sin(phi) * cos(theta)*.5;
+      y = rho * sin(phi) * sin(theta);
+      z = rho * cos(phi)* tallness;
+      s.vertex(x, y, z);
+      
+      x = rho * sin(phi + factor) * cos(theta)*.5;
+      y = rho * sin(phi + factor) * sin(theta);
+      z = rho * cos(phi + factor) * tallness;
+      s.vertex(x, y, z);
+    }
+    s.endShape(CLOSE);
+    s.rotateX(rotationX);
+    s.translate(position.x, position.y, position.z);
+    
   }
   return s;
 }

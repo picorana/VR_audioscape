@@ -27,7 +27,7 @@ class Terrain{
   color from = color(173, 152, 122);
   
   Road road;
-  int road_width = 5;
+  int road_width = 3;
   
   public Terrain(int tile_length, int strips_length, int strips_width, int strips_num){
     this.tile_length = tile_length; 
@@ -195,7 +195,7 @@ class Terrain{
 
       float road_center = strips_width/2 + curveValue;
       float dist = abs(road_center - i);
-      y_scale =  0.001*300/(1+pow((float)Math.E, -dist*0.5 + 10)); // sigmoid equation
+      y_scale =  0.001*300/(1+pow((float)Math.E, -dist*0.5 + 6)); // sigmoid equation
       
       float y0 = prevVerts.get(i).x;
       float y1 = prevVerts.get(i).y;
@@ -206,7 +206,10 @@ class Terrain{
 
       r.noStroke();   
 
-      r.fill(lerpColor(from, to, map(y2, 0, max_y2, 0, 1)), 255);   
+      
+      color thisColor = lerpColor(from, to, map(y2, 0, max_y2, 0, 1));
+      r.fill(thisColor);
+      
       
       r.vertex(i*tile_length, y0, 0); // 0
       r.vertex(i*tile_length + tile_length, y1, 0); // 1

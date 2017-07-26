@@ -217,7 +217,8 @@ class MusicAnalyzer{
     if (beat > threshold & beatCounter > 5) {
       //println(beatCounter);
       beatCounter = 0;
-      details.addCactus(new PVector(-curveValue*tile_length, 0, cameraOffsetZ+1800));
+      if (fallingItems) details.addCactus(new PVector(-curveValue*tile_length, 0, cameraOffsetZ - 600));
+      else details.addCactus(new PVector(-curveValue*tile_length, 0, cameraOffsetZ - 1000));
     }
     /////////////////////////////////////////////////////Calculate beat spreads///////////////////////////////////////////////////////////////////////////////////////////
   
@@ -246,29 +247,29 @@ class MusicAnalyzer{
     for (int i = 0; i < 200; i++) {
       fill(255);
        //(beatSpread[i] > 2*standardDeviation) rect(i*10, 0, ((i+1)*10)-5, beatSpread[i]*2);
-      rect(i*10, 0, ((i+1)*10)-5, beatSpread[i]*2);
+      ////rect(i*10, 0, ((i+1)*10)-5, beatSpread[i]*2);
     }
   
-    rect(0, standardDeviation*2-1, width/2, standardDeviation*2+1);
+    ////rect(0, standardDeviation*2-1, width/2, standardDeviation*2+1);
   
-    rect(width - 40, height, width, height - beat/(float(beatBands)/100));   //beat monitor
+    ////rect(width - 40, height, width, height - beat/(float(beatBands)/100));   //beat monitor
     //cacti.add(new Cactus(new PVector(-curveValue*tile_length, 0, cameraOffsetZ)));
-    rect(width - 80, height, width-40, height - totalBeat/(float(beatBands)/100));
-    rect(width - 80, height - threshold/(float(beatBands)/100) - 2, width-40, height - threshold/(float(beatBands)/100) + 2);
-  
+    ////rect(width - 80, height, width-40, height - totalBeat/(float(beatBands)/100));
+    ////rect(width - 80, height - threshold/(float(beatBands)/100) - 2, width-40, height - threshold/(float(beatBands)/100) + 2);
+    /*
     for (int i = 0; i < beatBands; i += 1) {    //Band monitor
       rect(i*((width-90)/beatBands), height, i*((width-90)/beatBands)+(((width-90)/beatBands)/2), height - totalShort[i]);                      //Short term intensity
-    }
+    }*/
   
     fill(100);
     for (int i = 0; i < beatBands; i += 1) {
-      rect(i*((width-90)/beatBands) + (((width-90)/beatBands)/2), height, i*((width-90)/beatBands)+((width-90)/beatBands), height - totalLong[i]);                      //Long term intensity
-      rect(i*((width-90)/beatBands) + (((width-90)/beatBands)/2), height - totalLong[i]*c[i]-2, i*((width-90)/beatBands)+((width-90)/beatBands), height - totalLong[i]*c[i]+2);      //threshold
+      ////rect(i*((width-90)/beatBands) + (((width-90)/beatBands)/2), height, i*((width-90)/beatBands)+((width-90)/beatBands), height - totalLong[i]);                      //Long term intensity
+      ////rect(i*((width-90)/beatBands) + (((width-90)/beatBands)/2), height - totalLong[i]*c[i]-2, i*((width-90)/beatBands)+((width-90)/beatBands), height - totalLong[i]*c[i]+2);      //threshold
       //if (count[i] < 4) rect(i*((width-90)/beatBands) + (((width-90)/beatBands)/2), 0, i*((width-90)/beatBands)+((width-90)/beatBands), 15);
       toDraw[i] = - totalLong[i];
     }
   
-    if (beatCounter < 5) rect(width - 50, 0, width, 50);  //beat indication box
+    ////if (beatCounter < 5) rect(width - 50, 0, width, 50);  //beat indication box
   
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   

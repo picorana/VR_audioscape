@@ -1,16 +1,18 @@
 class Dunes{
   
+  // looks like items at a distance >5000 from the camera aren't rendered
+  
   int baseLength = 5000;
   int detail = 100;
   int numMountainsFirstRow = 1;
-  int numMountainsSecondRow = 1;
+  int numMountainsSecondRow = 0;
   int mountainHeight = 100;
   int distance = 3000;
   
   color c1, c2;
   
-  ArrayList<PShape> dunesFirstRow;
-  ArrayList<PShape> dunesSecondRow;
+  PShape dunesFirstRow;
+  PShape dunesSecondRow;
   
   public Dunes(){
     
@@ -22,29 +24,29 @@ class Dunes{
       c2 = color(222, 232, 223);
     }
     
-    dunesFirstRow = new ArrayList();
-    dunesSecondRow = new ArrayList();
-    for (int i=0; i<numMountainsFirstRow; i++){
-      PShape dune = createMountain(c1, mountainHeight, 1, distance);
-      dune.translate(0, 0, 0);
-      dunesFirstRow.add(dune);
-    }
-    for (int i=0; i<numMountainsSecondRow; i++){
-      PShape dune = createMountain(c2, mountainHeight + 100, 2, distance + 1700);
-      dune.translate(0, -300, 0);
-      dune.rotateY(1);
-      dunesSecondRow.add(dune);
-    }
+    dunesFirstRow = createMountain(c1, mountainHeight, 1, distance);
+    dunesSecondRow = createMountain(c2, mountainHeight, 1, distance + 400);
+    dunesSecondRow.scale(1.1);
+    dunesSecondRow.translate(0, -300, 0);
   }
   
   void display(){
-    for (int i=0; i<dunesSecondRow.size(); i++){
-      shape(dunesSecondRow.get(i));
-    }
-    for (int i=0; i<dunesFirstRow.size(); i++){
-      shape(dunesFirstRow.get(i));
-    }
+    shape(dunesFirstRow);
+    shape(dunesSecondRow);
   }
+  
+  void update(){
+    dunesFirstRow.rotateY(cos(millis()/2000)*.005);
+    dunesSecondRow.rotateY(sin(millis()/2000)*.005);
+    dunesFirstRow.translate(0, sin(millis()/2000)*2, 0);
+    dunesSecondRow.translate(0, cos(millis()/2000)*3, 0);
+  }
+  
+  
+  void setColorScheme(color c1, color c2){
+    dunesFirstRow.setFill(c1);
+    dunesSecondRow.setFill(c2);
+  }  
   
   PShape createMountain(color c1, int mountainHeight, float scaleValue, float distance){
     float halfHeight = 30*scaleValue;
@@ -64,7 +66,6 @@ class Dunes{
     s.endShape(CLOSE); 
     s.rotateX(PI/2);
     s.translate(0, 200, 0);
-    s.scale(1, 1, 1);
     return s;
   }
 }

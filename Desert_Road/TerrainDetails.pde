@@ -28,8 +28,8 @@ class TerrainDetails{
   
   void addCactus(PVector position, int type){
     switch(type){
-      case 0: cacti.add(new FlatLeafCactus(position)); break;
-      case 1: cacti.add(new RoundCactus(position)); break;
+      case 0: cacti.add(new RoundCactus(position)); break;
+      case 1: cacti.add(new FlatLeafCactus(position)); break;
     }
   }
 }

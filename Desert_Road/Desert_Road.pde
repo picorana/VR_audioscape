@@ -1,16 +1,13 @@
 
 /* TODO:
-*  set shader fog distance based on number and size of tiles
-*  night/day transition
 *  tiles appear from below
 *  terrain details appear from the sky
 *  change distance at which details are removed according to tile number and size
 *  color of the terrain could be managed slightly better
 *  is the road not really centered?
-*  set the camera up
 *  move every util function into util class?
 *  load configuration from json file?
-*  move dunes in the background?
+*  there's a dark line appearing in the terrain when the app is started
 * 
 *  Terrain:
 *    - are we wasting resources by keeping an arraylist of PShapes? Is there a better way to do this?
@@ -36,14 +33,14 @@ int colorScheme = 0;
 // Shader data
 PShader skyShader;
 PShader fogShader;
-boolean shaderEnabled = false;
+boolean shaderEnabled = true;
 
 // Terrain data
 Terrain terrain;
 int strips_length   = 1;
-int tile_length     = 50;
+int tile_length     = 40;
 int strips_width    = 60;
-int strips_num      = 80;
+int strips_num      = 60;
 
 // More details
 TerrainDetails details;
@@ -62,10 +59,16 @@ int cameraOffsetZ   = 2;
 // Memory management
 long freeMemory; 
 
+// Music Analysis
 MusicAnalyzer ma;
 Visualizer mVisualizer;
 boolean recordAudioPermission = false;
 
+// Day/night cycle
+boolean isDay = true;
+boolean isNight = false;
+
+boolean fallingItems = true;
 
 void settings(){
   smooth();
@@ -80,31 +83,33 @@ void setup(){
   
   sketchPApplet = this;
   
-  //cam = new QueasyCam(this);
-  //cam = new PeasyCam(this, 1000);
-  //cam.setMaximumDistance(50000);
-  
-  fogShader = loadShader("fogfrag.glsl", "fogvert.glsl");
-  
-  skybox = createSkybox();
-  
   terrain = new Terrain(tile_length, strips_length, strips_width, strips_num);
   
-  fogShader.set("fogMinDistance", 1100.0);
-  fogShader.set("fogMaxDistance", 1300.0);
+  fogShader = loadShader("fogfrag.glsl", "fogvert.glsl");
+  float fogDistance = min(tile_length*strips_width, tile_length*strips_num)/2 - 100;
+  println(fogDistance);
+  fogShader.set("fogMinDistance", fogDistance - 300);
+  fogShader.set("fogMaxDistance", fogDistance);
+  fogShader.set("fogLimit", fogDistance + 700);
+  
   setColorScheme(colorScheme);
   
   terrain.startTerrain();
   details = new TerrainDetails();
-  
   dunes = new Dunes();
+  skybox = createSkybox();
 }
 
 void draw() {
-  println("framerate: " + frameRate);
+  
+  rotateY(PI);
+  
+  //println("framerate: " + frameRate);
   
   background(skyboxColor);
   if (skyboxEnabled) shape(skybox);
+  
+  dunes.update();
   dunes.display();
   
   cameraCenter();
@@ -116,6 +121,7 @@ void draw() {
   details.update();
   details.display();
 
+  cycleColorScheme();
   
   if (moving) cameraOffsetZ+=tile_length;
   
@@ -131,17 +137,115 @@ void draw() {
 // function used to change the colors
 // 0 --> day, 1 --> night
 void setColorScheme(int colorScheme){
+  
+  color terrainColorA, terrainColorB;
+  
   if (colorScheme == 0){
-    terrain.setColorScheme(color(204, 102, 0), color(173, 152, 122));
-    skyboxColor = color(255, 255, 255);
+    
+    terrainColorA = color(204, 102, 0);
+    terrainColorB = color(173, 152, 122);
+    
     fogShader.set("fogColor", 225/255.0, 211/255.0, 190/255.0);
     fogShader.set("lightingEnabled", false);
-  } else if (colorScheme == 1){
-    terrain.setColorScheme(#185768, #308096);
-    skyboxColor = color(50, 93, 102);
-    skyboxEnabled = true;
+    
+  } else {
+    
+    terrainColorA = color(#185768);
+    terrainColorB = color(#308096);
+    
     fogShader.set("fogColor", 50.0/255, 93.0/255, 102.0/255);
     fogShader.set("lightingEnabled", true);
+    
+  }
+  
+  terrain.setColorScheme(terrainColorA, terrainColorB);
+}
+
+
+void cycleColorScheme(){
+  
+  float cycleDuration = 20000;
+  float transitionDuration = 1000;
+  float dayDuration = cycleDuration/2 - transitionDuration;
+  float nightDuration = cycleDuration/2 - transitionDuration;
+  float [] timePeriods = new float[]{
+    dayDuration, 
+    dayDuration + transitionDuration, 
+    dayDuration + transitionDuration + nightDuration
+  };
+  
+  color terrainColorDayA = color(204, 102, 0);
+  color terrainColorDayB = color(173, 152, 122);
+  color terrainColorNightA = color(#185768);
+  color terrainColorNightB = color(#4090A6);
+  
+  color skyboxColorDay = color(#7EB583);
+  color skyboxColorNight = color(30, 53, 70);
+  
+  color dunesFirstRowDay = color(225, 211, 190);
+  color dunesSecondRowDay = color(222, 232, 223 );
+  color dunesFirstRowNight = color(#325d66);
+  color dunesSecondRowNight = color(222, 232, 223);
+  
+  color fogColorDay = color(225, 211, 190);
+  color fogColorNight = color(50, 93, 102);
+  
+  float cur_time = millis() % cycleDuration;
+  
+  if (cur_time <= timePeriods[0] && !isDay) {
+    // DAY
+    terrain.setColorScheme(terrainColorDayA, terrainColorDayB);
+    skybox.setFill(skyboxColorDay);
+    dunes.setColorScheme(dunesFirstRowDay, dunesSecondRowDay);
+    fogShader.set("fogColor", red(fogColorDay)/255.0, green(fogColorDay)/255.0, blue(fogColorDay)/255.0);
+    
+    isDay = true;
+    
+  } else if (cur_time > timePeriods[0] && cur_time <= timePeriods[1]) {
+    // SUNSET
+    color A = lerpColor(terrainColorDayA, terrainColorNightA, (cur_time - timePeriods[0])/transitionDuration);
+    color B = lerpColor(terrainColorDayB, terrainColorNightB, (cur_time - timePeriods[0])/transitionDuration);
+    terrain.setColorScheme(A, B);
+    
+    A = lerpColor(dunesFirstRowDay, dunesFirstRowNight, (cur_time - timePeriods[0])/transitionDuration);
+    B = lerpColor(dunesSecondRowDay, dunesSecondRowNight, (cur_time - timePeriods[0])/transitionDuration);
+    dunes.setColorScheme(A, B);
+    
+    color skyboxColor = lerpColor(skyboxColorDay, skyboxColorNight, (cur_time - timePeriods[0])/transitionDuration);
+    skybox.setFill(skyboxColor);
+    
+    color fogColor = lerpColor(fogColorDay, fogColorNight, (cur_time - timePeriods[0])/transitionDuration);
+    fogShader.set("fogColor", red(fogColor)/255.0, green(fogColor)/255.0, blue(fogColor)/255.0);
+    
+    isDay = false;
+    
+  } else if (cur_time > timePeriods[1] && cur_time <= timePeriods[2] && !isNight) {
+    // NIGHT
+    terrain.setColorScheme(terrainColorNightA, terrainColorNightB);
+    dunes.setColorScheme(dunesFirstRowNight, dunesSecondRowNight);
+    fogShader.set("fogColor", red(fogColorNight)/255.0, green(fogColorNight)/255.0, blue(fogColorNight)/255.0);
+    skybox.setFill(skyboxColorNight);
+    
+    isNight = true;
+    
+  } else if (cur_time > timePeriods[2]){
+    // DAWN
+    color A = lerpColor(terrainColorNightA, terrainColorDayA, (cur_time - timePeriods[2])/transitionDuration);
+    color B = lerpColor(terrainColorNightB, terrainColorDayB, (cur_time - timePeriods[2])/transitionDuration);
+    terrain.setColorScheme(A, B);
+    
+    A = lerpColor(dunesFirstRowNight, dunesFirstRowDay, (cur_time - timePeriods[2])/transitionDuration);
+    B = lerpColor(dunesSecondRowNight, dunesSecondRowDay, (cur_time - timePeriods[2])/transitionDuration);
+    dunes.setColorScheme(A, B);
+    
+    color skyboxColor = lerpColor(skyboxColorNight, skyboxColorDay, (cur_time - timePeriods[2])/transitionDuration);
+    skybox.setFill(skyboxColor);
+    
+    color fogColor = lerpColor(fogColorNight, fogColorDay, (cur_time - timePeriods[2])/transitionDuration);
+    fogShader.set("fogColor", red(fogColor)/255.0, green(fogColor)/255.0, blue(fogColor)/255.0);
+    
+    isNight = false;
+    
   }
 }
 
@@ -187,7 +291,7 @@ void keyPressed(){
 // sets the camera to terrain center
 void cameraCenter(){
   cameraToOrigin();
-  translate(- tile_length*strips_num*.5, 550, -cameraOffsetZ - strips_num*tile_length*1.3);
+  translate(- tile_length*strips_num, 750, -cameraOffsetZ - strips_num*tile_length*1.7);
 }
 
 

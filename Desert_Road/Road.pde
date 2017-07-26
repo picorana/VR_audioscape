@@ -4,7 +4,7 @@ class Road{
   ArrayList <PShape> road = new ArrayList();
   
   float road_height = -10;
-  float road_width = 5;
+  float road_width = 3;
   color road_color = color(#554040);
   
   int strips_width;

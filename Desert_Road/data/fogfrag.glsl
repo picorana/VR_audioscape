@@ -13,6 +13,7 @@ varying vec4 eye;
 uniform vec3 fogColor;
 uniform float fogMinDistance;
 uniform float fogMaxDistance;
+uniform float fogLimit;
 
 uniform bool lightingEnabled;
 
@@ -54,6 +55,6 @@ void main() {
     }
     
     if (depth<2400.0 && lightingEnabled) gl_FragColor = mix(gl_FragColor, vec4(fogColor, gl_FragColor.w), fogFactor);
-    else if (depth<2000.0) gl_FragColor = mix(gl_FragColor, vec4(fogColor, gl_FragColor.w), fogFactor);
+    else if (depth<fogLimit) gl_FragColor = mix(gl_FragColor, vec4(fogColor, gl_FragColor.w), fogFactor);
 
 } 

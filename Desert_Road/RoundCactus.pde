@@ -4,30 +4,35 @@ class RoundCactus implements Cactus{
   PShape cactus;
   float creationTime;
   
+  int speed = 10;
+  
   public RoundCactus(PVector position){
     this.position = position;
-    targetPosition = position;
+    targetPosition = position.copy();
+    
     creationTime = millis();
     cactus = createCactus();
-    cactus.scale(2);
+    cactus.scale(0.7);
   }
   
   void display(){
     pushMatrix();
-    translate(1800 + position.x, -20 + position.y, 5300 + position.z);
+    translate(1800 + position.x, - 50 + position.y, 6000 + position.z);
     rotateX(-HALF_PI);
     shape(cactus);
     popMatrix();
   }
   
   void update(){
-    if (abs(millis()-creationTime) < 5000){
-      position.y = targetPosition.y - abs(millis() - creationTime);
-    }
+    if (millis()-creationTime <= 800 && fallingItems){
+      float cur_time = abs(millis()-creationTime);
+      position.y = (targetPosition.y - 0.003125*pow(cur_time - 800, 2));
+      println(position.y + " " + targetPosition.y);
+    } else position.y = targetPosition.y;
   }
   
   boolean removable(){
-    if (abs(position.z - cameraOffsetZ) >=2000) return true;
+    if (abs(position.z - cameraOffsetZ) >=4000) return true;
     else return false;
   }
   
@@ -35,20 +40,26 @@ class RoundCactus implements Cactus{
     
     PShape g = createShape(GROUP);
     g.addChild(createHemisphere(g));
-  
+    
     return g;
   }
   
   PShape createHemisphere(PShape group){
-  float radius = random(20, 50.0);
-  float tallness = random(1, 3);
+  float radius = random(20, 80.0);
+  float tallness = random(1, 4);
   float rho = radius;
-  float factor = TWO_PI/40.0;
+  float factor = TWO_PI/20.0;
   float x, y, z;
   
-  float green_r_component = random(50, 150);
-  float green_g_component = random(150, 200);
-  float green_b_component = random(50, 150);
+  int type = 0;
+  
+  float green_r_component = random(100, 150);
+  float green_g_component = 150;
+  float green_b_component = random(100, 150);
+  
+  float yellow_r_component = random(200, 255);
+  float yellow_g_component = random(200, 255);
+  float yellow_b_component = random(120, 170);
 
   PShape s = createShape();
     for(float phi = 0.0; phi < PI; phi += factor) {
@@ -57,18 +68,18 @@ class RoundCactus implements Cactus{
       
       for(float theta = 0.0; theta < TWO_PI + factor; theta += factor) {
         
-        if (theta%.1<.05) {
+        if (theta%.6<.3) {
           rho = radius + 5;
-          s.fill(color(255, 255, 150));
-          if (random(0, 1)<.5){
+          s.fill(color(yellow_r_component, yellow_g_component, yellow_b_component));
+          /*if (random(0, 1)<.5){
             sphereDetail(1);
-            PShape r = createShape(SPHERE, 1.5);
+            PShape r = createShape(SPHERE, 3);
             r.setFill(color(150, 150, 150));
             r.setStroke(false);
             //r.scale(sin(phi)*cos(theta)*5, sin(phi)*sin(theta)*5, cos(phi)*5);
             r.translate(rho * sin(phi) * cos(theta), rho * sin(phi) * sin(theta), rho * cos(phi)*tallness*phi*.25);
             group.addChild(r);
-          }
+          }*/
           
         } else {
           rho = radius;
@@ -78,14 +89,17 @@ class RoundCactus implements Cactus{
         x = rho * sin(phi) * cos(theta);
         y = rho * sin(phi) * sin(theta);
         z = rho * cos(phi)* tallness*abs(phi*.5)*.5;
+        //else z = rho * cos(phi)* tallness;
         s.vertex(x, y, z);
         
         x = rho * sin(phi + factor) * cos(theta);
         y = rho * sin(phi + factor) * sin(theta);
         z = rho * cos(phi + factor) * tallness*abs((phi+factor)*.5)*.5;
+        //else z = rho * cos(phi + factor) * tallness;
         s.vertex(x, y, z);
       }
-      s.endShape(CLOSE);
+      s.rotateZ(HALF_PI);
+      s.endShape(CLOSE); 
     }
     return s;
   }
