@@ -19,7 +19,7 @@ void setup(){
   size(600, 600, P3D);
   for (int i=0; i<3; i++){
     for (int j=0; j<3; j++){
-      cacti[i][j] = createMickeyCactus();
+      cacti[i][j] = createCactus();
     }
   }
 
@@ -31,8 +31,8 @@ void draw(){
   //lights();
   background(255);
   rotateX(PI);
-  for (int i=0; i<1; i++){
-    for (int j=0; j<1; j++){
+  for (int i=0; i<3; i++){
+    for (int j=0; j<3; j++){
       pushMatrix();
       translate(i*150, j*150, 0);
       shape(cacti[i][j]);

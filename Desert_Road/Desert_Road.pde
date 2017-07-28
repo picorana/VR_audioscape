@@ -1,7 +1,6 @@
 
 /* TODO:
-*  tiles appear from below
-*  terrain details appear from the sky
+*  figure out clearly the camera position when starting the app
 *  change distance at which details are removed according to tile number and size
 *  color of the terrain could be managed slightly better
 *  is the road not really centered?
@@ -68,7 +67,8 @@ boolean recordAudioPermission = false;
 boolean isDay = true;
 boolean isNight = false;
 
-boolean fallingItems = true;
+boolean fallingItems = false;
+ArrayList<PShape> cactiMeshes;
 
 void settings(){
   smooth();
@@ -82,6 +82,8 @@ void setup(){
   requestPermission("android.permission.RECORD_AUDIO", "permissionCallback");
   
   sketchPApplet = this;
+  
+  loadCactiMeshes();
   
   terrain = new Terrain(tile_length, strips_length, strips_width, strips_num);
   
@@ -98,6 +100,7 @@ void setup(){
   details = new TerrainDetails();
   dunes = new Dunes();
   skybox = createSkybox();
+  
 }
 
 void draw() {
@@ -326,4 +329,11 @@ void permissionCallback(boolean granted){
     ma = new MusicAnalyzer();
     recordAudioPermission = true;
   }
+}
+
+void loadCactiMeshes(){
+  cactiMeshes = new ArrayList();
+  PShape s = loadShape("cactus3.obj");
+  s.scale(50);
+  cactiMeshes.add(s);
 }

@@ -36,18 +36,45 @@ class Road{
     }
   }
   
-  
-  // creates the actual pshape of a part of the road
-  PShape createRoadStrip(){  
-    PShape s = createShape();
-    s.beginShape();
-    s.noStroke();
-    s.fill(road_color);
-    
-    s.vertex(roadBorders.get(roadBorders.size()-1).y, road_height, 0);
+  /*
+      s.vertex(roadBorders.get(roadBorders.size()-1).y, road_height, 0);
     s.vertex(roadBorders.get(roadBorders.size()-1).x, road_height, 0);
     s.vertex(((strips_width/2 + curveValue) - road_width)*tile_length, road_height, tile_length);
     s.vertex(((strips_width/2 + curveValue) + road_width)*tile_length, road_height, tile_length);
+  */
+  
+  // creates the actual pshape of a part of the road
+  PShape createRoadStrip(){  
+    
+    int lineSize = 30;
+    
+    PShape s = createShape();
+    s.beginShape(QUAD_STRIP);
+    s.noStroke();
+    s.fill(road_color);
+    
+    for (float i=0; i<road_width; i+=.5){
+      if (i==1 || i==road_width-1.5) s.fill(150);
+      else s.fill(road_color);
+      s.vertex(roadBorders.get(roadBorders.size()-1).y + lineSize*i*3, road_height, 0);
+      s.vertex(((strips_width/2 + curveValue) + road_width)*tile_length + lineSize*i*3, road_height, tile_length);
+    }
+    
+    /*
+    s.vertex(roadBorders.get(roadBorders.size()-1).y, road_height, 0);
+    s.vertex(((strips_width/2 + curveValue) + road_width)*tile_length, road_height, tile_length);
+    
+    s.fill(255);
+    s.vertex(roadBorders.get(roadBorders.size()-1).y + lineSize, road_height, 0);
+    s.vertex(((strips_width/2 + curveValue) + road_width)*tile_length + lineSize, road_height, tile_length);
+    
+    s.vertex(roadBorders.get(roadBorders.size()-1).y + lineSize*2, road_height, 0);
+    s.vertex(((strips_width/2 + curveValue) + road_width)*tile_length + lineSize*2, road_height, tile_length);*/
+    
+    /*
+    s.vertex(roadBorders.get(roadBorders.size()-1).x, road_height, 0);
+    s.vertex(((strips_width/2 + curveValue) - road_width)*tile_length, road_height, tile_length);
+    s.vertex(((strips_width/2 + curveValue) + road_width)*tile_length, road_height, tile_length);*/
     
     roadBorders.add(new PVector((strips_width/2 + curveValue - road_width)*tile_length, (strips_width/2 + curveValue + road_width)*tile_length));
     s.endShape();

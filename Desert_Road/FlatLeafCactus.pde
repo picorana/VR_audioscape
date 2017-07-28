@@ -34,7 +34,7 @@ class FlatLeafCactus implements Cactus{
     if (millis()-creationTime <= 800 && fallingItems){
       float cur_time = abs(millis()-creationTime);
       position.y = (targetPosition.y - 0.003125*pow(cur_time - 800, 2));
-      println(position.y + " " + targetPosition.y);
+      //println(position.y + " " + targetPosition.y);
     } else position.y = targetPosition.y;
   }
   

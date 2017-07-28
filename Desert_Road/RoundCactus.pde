@@ -4,8 +4,6 @@ class RoundCactus implements Cactus{
   PShape cactus;
   float creationTime;
   
-  int speed = 10;
-  
   public RoundCactus(PVector position){
     this.position = position;
     targetPosition = position.copy();
@@ -27,7 +25,6 @@ class RoundCactus implements Cactus{
     if (millis()-creationTime <= 800 && fallingItems){
       float cur_time = abs(millis()-creationTime);
       position.y = (targetPosition.y - 0.003125*pow(cur_time - 800, 2));
-      println(position.y + " " + targetPosition.y);
     } else position.y = targetPosition.y;
   }
   
