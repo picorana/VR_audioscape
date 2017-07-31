@@ -26,8 +26,9 @@ class Dunes{
     
     dunesFirstRow = createMountain(c1, mountainHeight, 1, distance);
     dunesSecondRow = createMountain(c2, mountainHeight, 1, distance + 400);
+    dunesFirstRow.translate(0, -100, 0);
     dunesSecondRow.scale(1.1);
-    dunesSecondRow.translate(0, -300, 0);
+    dunesSecondRow.translate(0, -200, 0);
   }
   
   void display(){

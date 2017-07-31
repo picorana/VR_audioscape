@@ -5,6 +5,7 @@ class Road{
   
   float road_height = - 40;
   float road_width = 3;
+  float prevCurveValue = 0;
   color road_color = color(#554040);
   
   int strips_width;
@@ -36,52 +37,44 @@ class Road{
     }
   }
   
-  /*
-      s.vertex(roadBorders.get(roadBorders.size()-1).y, road_height, 0);
-    s.vertex(roadBorders.get(roadBorders.size()-1).x, road_height, 0);
-    s.vertex(((strips_width/2 + curveValue) - road_width)*tile_length, road_height, tile_length);
-    s.vertex(((strips_width/2 + curveValue) + road_width)*tile_length, road_height, tile_length);
-  */
-  
   // creates the actual pshape of a part of the road
   PShape createRoadStrip(){  
     
-    int lineSize = 30;
+    PShape g = createShape(GROUP);
     
     PShape s = createShape();
-    s.beginShape(QUAD_STRIP);
+    s.beginShape();
     s.noStroke();
     s.fill(road_color);
-    
-    float tile_step = road_width/tile_length;
-    int total_count = (int)(road_width/tile_step);
-    
-    for (float i=0; i<road_width; i+=tile_step){
-      if (i==tile_step*2 || i==tile_step*5) s.fill(150);
-      else s.fill(road_color);
-      s.vertex(roadBorders.get(roadBorders.size()-1).y + lineSize*i*3, road_height, 0);
-      s.vertex(((strips_width/2 + curveValue) + road_width)*tile_length + lineSize*i*3, road_height, tile_length);
-    }
-    
-    /*
+
     s.vertex(roadBorders.get(roadBorders.size()-1).y, road_height, 0);
-    s.vertex(((strips_width/2 + curveValue) + road_width)*tile_length, road_height, tile_length);
-    
-    s.fill(255);
-    s.vertex(roadBorders.get(roadBorders.size()-1).y + lineSize, road_height, 0);
-    s.vertex(((strips_width/2 + curveValue) + road_width)*tile_length + lineSize, road_height, tile_length);
-    
-    s.vertex(roadBorders.get(roadBorders.size()-1).y + lineSize*2, road_height, 0);
-    s.vertex(((strips_width/2 + curveValue) + road_width)*tile_length + lineSize*2, road_height, tile_length);*/
-    
-    /*
     s.vertex(roadBorders.get(roadBorders.size()-1).x, road_height, 0);
     s.vertex(((strips_width/2 + curveValue) - road_width)*tile_length, road_height, tile_length);
-    s.vertex(((strips_width/2 + curveValue) + road_width)*tile_length, road_height, tile_length);*/
+    s.vertex(((strips_width/2 + curveValue) + road_width)*tile_length, road_height, tile_length);
     
     roadBorders.add(new PVector((strips_width/2 + curveValue - road_width)*tile_length, (strips_width/2 + curveValue + road_width)*tile_length));
     s.endShape();
+    g.addChild(s);
     
-    return s;
+    float line_width = 0.2;
+    
+    // line 1
+    if (frameCount%10<5){
+      s = createShape();
+      s.beginShape();
+      s.noStroke();
+      s.fill(200);
+      s.vertex(((strips_width/2 + prevCurveValue) + line_width)*tile_length, road_height, 0);
+      s.vertex(((strips_width/2 + prevCurveValue) - line_width)*tile_length, road_height, 0);
+      s.vertex(((strips_width/2 + curveValue) - line_width)*tile_length, road_height - 2, tile_length);
+      s.vertex(((strips_width/2 + curveValue) + line_width)*tile_length, road_height - 2, tile_length);
+      
+      s.endShape();
+      g.addChild(s);
+    }
+    
+    prevCurveValue = curveValue;
+    
+    return g;
   }
 }
