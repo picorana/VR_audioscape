@@ -3,7 +3,7 @@ class Road{
   ArrayList <PVector> roadBorders = new ArrayList(); // used to keep track of previous vertices
   ArrayList <PShape> road = new ArrayList();
   
-  float road_height = -10;
+  float road_height = - 40;
   float road_width = 3;
   color road_color = color(#554040);
   
@@ -53,8 +53,11 @@ class Road{
     s.noStroke();
     s.fill(road_color);
     
-    for (float i=0; i<road_width; i+=.5){
-      if (i==1 || i==road_width-1.5) s.fill(150);
+    float tile_step = road_width/tile_length;
+    int total_count = (int)(road_width/tile_step);
+    
+    for (float i=0; i<road_width; i+=tile_step){
+      if (i==tile_step*2 || i==tile_step*5) s.fill(150);
       else s.fill(road_color);
       s.vertex(roadBorders.get(roadBorders.size()-1).y + lineSize*i*3, road_height, 0);
       s.vertex(((strips_width/2 + curveValue) + road_width)*tile_length + lineSize*i*3, road_height, tile_length);

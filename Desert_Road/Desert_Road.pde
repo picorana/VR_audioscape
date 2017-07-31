@@ -333,7 +333,12 @@ void permissionCallback(boolean granted){
 
 void loadCactiMeshes(){
   cactiMeshes = new ArrayList();
-  PShape s = loadShape("cactus3.obj");
-  s.scale(50);
-  cactiMeshes.add(s);
+  PShape s;
+  for (int i=1; i<4; i++){
+    if (i==1) s = loadShape("cactus.obj");
+    else s = loadShape("cactus" + i + ".obj");
+    s.scale(50);
+    s.setFill(color(random(100, 150), 150, random(100, 150)));
+    cactiMeshes.add(s);
+  }
 }

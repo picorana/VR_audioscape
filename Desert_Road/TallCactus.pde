@@ -9,7 +9,7 @@ class TallCactus implements Cactus{
     targetPosition = position.copy();
     
     creationTime = millis();
-    cactus = cactiMeshes.get(0);
+    cactus = cactiMeshes.get((int)random(0, cactiMeshes.size()));
     
     //cactus.setFill(color(100, 150, 100));
     //cactus.scale(50);

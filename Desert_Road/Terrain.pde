@@ -195,7 +195,7 @@ class Terrain{
 
       float road_center = strips_width/2 + curveValue;
       float dist = abs(road_center - i);
-      y_scale =  0.001*300/(1+pow((float)Math.E, -dist*0.5 + 6)); // sigmoid equation
+      y_scale =  0.001*300/(1+pow((float)Math.E, -dist*0.5 + 7)); // sigmoid equation
       
       float y0 = prevVerts.get(i).x;
       float y1 = prevVerts.get(i).y;
