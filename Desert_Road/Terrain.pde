@@ -29,6 +29,8 @@ class Terrain{
   Road road;
   int road_width = 3;
   
+  float dividing_space = 1;
+  
   public Terrain(int tile_length, int strips_length, int strips_width, int strips_num){
     this.tile_length = tile_length; 
     this.strips_length = strips_length; 
@@ -213,8 +215,8 @@ class Terrain{
       
       r.vertex(i*tile_length, y0, 0); // 0
       r.vertex(i*tile_length + tile_length, y1, 0); // 1
-      r.vertex(i*tile_length + tile_length, y2, tile_length); // 2
-      r.vertex(i*tile_length, y3, tile_length); // 3
+      r.vertex(i*tile_length + tile_length, y2, tile_length/dividing_space); // 2
+      r.vertex(i*tile_length, y3, tile_length/dividing_space); // 3
 
       r.endShape(CLOSE);
       s.addChild(r);

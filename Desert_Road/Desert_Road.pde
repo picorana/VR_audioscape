@@ -25,6 +25,8 @@ import android.media.audiofx.Visualizer;
 //QueasyCam cam;
 //PeasyCam cam;
 PApplet sketchPApplet;
+SplashScreen splashScreen;
+boolean splashScreenOn = true;
 boolean recording   = false;
 boolean grassEnabled = false;
 int colorScheme = 0;
@@ -71,17 +73,17 @@ boolean fallingItems = false;
 ArrayList<PShape> cactiMeshes;
 
 void settings(){
-  smooth();
-  //size(1000, 700, P3D);
   fullScreen(STEREO);
 }
 
 
-void setup(){
+void setup(){ 
   
   requestPermission("android.permission.RECORD_AUDIO", "permissionCallback");
   
   sketchPApplet = this;
+  
+  splashScreen = new SplashScreen();
   
   loadCactiMeshes();
   
@@ -104,6 +106,29 @@ void setup(){
 }
 
 void draw() {
+  
+  if (splashScreenOn) {
+    terrain.dividing_space = 6;
+    terrain.setColorScheme(color(255), color(255));
+    terrain.road.visible = false;
+    pushMatrix();
+    cameraToOrigin();
+    splashScreen.display();
+    splashScreen.update();
+    popMatrix();
+    pushMatrix();
+    cameraCenter();
+    translate(tile_length*strips_num/2, 0, 0);
+    //translate(- tile_length*strips_num, 750, -cameraOffsetZ - strips_num*tile_length*1.7);
+    terrain.display();
+    if (moving) cameraOffsetZ+=tile_length;
+  
+    if (recordAudioPermission) terrain.addMusicStrip(ma.analyze());
+    else if (cameraOffsetZ%(strips_length*tile_length)<1) terrain.addStrip();
+    popMatrix();
+
+    return;
+  }
   
   rotateY(PI);
   

@@ -7,6 +7,7 @@ class Road{
   float road_width = 3;
   float prevCurveValue = 0;
   color road_color = color(#554040);
+  boolean visible = true;
   
   int strips_width;
   int strip_index = 0;
@@ -19,6 +20,7 @@ class Road{
   
   
   void display(){
+    if (!visible) return;
     for (int i=0; i<road.size(); i++){
       pushMatrix();
       translate(0, 0, (tile_length)*i + strip_index*(tile_length));
@@ -63,7 +65,7 @@ class Road{
       s = createShape();
       s.beginShape();
       s.noStroke();
-      s.fill(200);
+      s.fill(170);
       s.vertex(((strips_width/2 + prevCurveValue) + line_width)*tile_length, road_height, 0);
       s.vertex(((strips_width/2 + prevCurveValue) - line_width)*tile_length, road_height, 0);
       s.vertex(((strips_width/2 + curveValue) - line_width)*tile_length, road_height - 2, tile_length);
