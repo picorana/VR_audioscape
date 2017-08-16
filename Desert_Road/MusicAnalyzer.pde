@@ -218,7 +218,7 @@ class MusicAnalyzer{
       //println(beatCounter);
       beatCounter = 0;
       if (fallingItems) details.addCactus(new PVector(-curveValue*tile_length, 0, cameraOffsetZ - 600));
-      else details.addCactus(new PVector(-curveValue*tile_length, 0, cameraOffsetZ - 1000));
+      else details.addCactus(new PVector(-curveValue*tile_length, 0, cameraOffsetZ + 150));
     }
     /////////////////////////////////////////////////////Calculate beat spreads///////////////////////////////////////////////////////////////////////////////////////////
   

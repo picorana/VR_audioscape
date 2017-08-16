@@ -2,38 +2,45 @@ class SplashScreen{
   
   PShape s;
   PShape loadingIcon;
+  PVector loadingIconPosition;
   PImage img;
-  PGraphics loadingImage;
+  PImage loadingImage;
+  Terrain t;
   
   boolean counting = false;
   float countingTimestamp = 0;
   
   
-  public SplashScreen(){
+  public SplashScreen(Terrain t){
+    this.t = t;
     img = loadImage("splashtexture.png");
     s = createCylinder(20, 1000, 1000);
     loadingIcon = createLoadingIcon();
-    loadingImage = createGraphics(200, 200);
+    loadingIcon.scale(3, 3, 0.1);
+    loadingIconPosition = new PVector(0, 0, -150);
+    loadingImage = loadImage("loadingImage.png");
+    loadingIcon.setTexture(loadingImage);
   }
+  
   
   void display(){
     background(0);
     shape(s);
     pushMatrix();
-    translate(0, 0, -150);
+    translate(loadingIconPosition.x, loadingIconPosition.y, loadingIconPosition.z);
     shape(loadingIcon);
-    
     popMatrix();
   }
   
-  void startSketch(){
+  
+  void startSketch(){   
     splashScreenOn = false;
   }
   
   
   PShape createLoadingIcon(){
     PShape s = createShape(BOX, 30);
-    s.setFill(color(255, 0, 0));
+    s.setFill(color(255, 255, 255));
     return s;
   }
   
@@ -59,21 +66,37 @@ class SplashScreen{
     return s;
   }
   
+  
   void update(){
-    println("x: " + ((PGraphicsVR)g).forwardX + " y: " + ((PGraphicsVR)g).forwardY + " z: " + ((PGraphicsVR)g).forwardZ);
+    boolean looking = lookingAtButton();
     if (counting){
-      if (0<((PGraphicsVR)g).forwardZ || ((PGraphicsVR)g).forwardZ<-.5) counting = false;
-      else if (0>((PGraphicsVR)g).forwardZ && ((PGraphicsVR)g).forwardZ>-.5 && millis()-countingTimestamp > 3000){
-        startSketch();
+      if (!looking) counting = false;
+      else if (looking && millis()-countingTimestamp > 3000){
+        if (!fadingOut){
+          fadingOut = true;
+          fadingOutStart = millis();
+          loadingIcon.tint(255 - (millis()-fadingOutStart) );
+        }
       } else {
-        loadingIcon.rotateY((millis()-countingTimestamp)/5000.0);
+        loadingIcon.rotateZ((millis()-countingTimestamp)/100000.0);
       }
     } else {
-      if (0>((PGraphicsVR)g).forwardZ && ((PGraphicsVR)g).forwardZ>-.5){
+      if (looking){
         countingTimestamp = millis();
         counting = true;
-        println("in");
       } else counting = false;
     }
   }
+  
+  
+  boolean lookingAtButton(){
+    PVector tmpPVector = loadingIconPosition.copy().normalize();
+    float distanceX = abs(tmpPVector.x - ((PGraphicsVR)g).forwardX);
+    float distanceY = abs(tmpPVector.y - ((PGraphicsVR)g).forwardY);
+    float distanceZ = abs(tmpPVector.z - ((PGraphicsVR)g).forwardZ);
+    float totalDistance = distanceX + distanceY + distanceZ;
+    if (totalDistance < .5) return true;
+    else return false;
+  }
+
 }

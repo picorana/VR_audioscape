@@ -27,7 +27,7 @@ class Terrain{
   color from = color(173, 152, 122);
   
   Road road;
-  int road_width = 3;
+  int road_width = 2;
   
   float dividing_space = 1;
   

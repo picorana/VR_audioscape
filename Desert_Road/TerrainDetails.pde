@@ -31,6 +31,7 @@ class TerrainDetails{
       case 0: cacti.add(new RoundCactus(position)); break;
       case 1: cacti.add(new FlatLeafCactus(position)); break;
       case 2: cacti.add(new TallCactus(position)); break;
+      default: cacti.add(new FlatLeafCactus(position)); break;
     }
   }
 }

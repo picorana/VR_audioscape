@@ -24,7 +24,7 @@ class FlatLeafCactus implements Cactus{
   
   void display(){
     pushMatrix();
-    translate(1800 + position.x, -50 + position.y, 6000 + position.z);
+    translate(1800 + position.x, -50 + position.y, 9000 + position.z);
     rotateX(PI);
     shape(cactus);
     popMatrix();
@@ -39,7 +39,7 @@ class FlatLeafCactus implements Cactus{
   }
   
   boolean removable(){
-    if (abs(position.z - cameraOffsetZ) >=4000) return true;
+    if (abs(position.z - cameraOffsetZ) >=6000) return true;
     else return false;
   }
   
