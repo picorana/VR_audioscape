@@ -3,7 +3,7 @@ Google Summer of Code 2017 project - VR application built with processing-androi
 
 
 <div align='center'>
-  <img src="index4.gif">
+  <img src="img/index4.gif">
 </div>
 
 Desert Road uses music to generate a landscape in VR.
