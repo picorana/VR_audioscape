@@ -32,7 +32,9 @@ int tile_length     = 50;
 int strips_width    = 50;
 int strips_num      = 90;
 
-// More details
+// Other details in the scene
+ArrayList<PShape> cactiMeshes;
+boolean fallingItems = false;
 TerrainDetails details;
 Dunes dunes;
 
@@ -61,14 +63,12 @@ boolean isDusk    = false;
 boolean isDawn    = false;
 color curFogColor = color(0, 0, 0);
 
-boolean fallingItems = false;
-ArrayList<PShape> cactiMeshes;
-
+// Transition between splash screen and desert scene
 PShape fadeOutScreen;
+boolean displayFadeOutScreen = false;
 boolean fadingOut = false;
 float fadingOutStart = 0;
 float fadingOutDuration = 5000;
-boolean displayFadeOutScreen = false;
 
 
 void settings(){
@@ -80,108 +80,96 @@ void setup(){
   requestPermission("android.permission.RECORD_AUDIO", "permissionCallback"); 
   sketchPApplet = this;
   
-  ((PGraphicsOpenGL)g).pgl.enable(PGL.CULL_FACE);
-  
+  // init everything
   loadCactiMeshes();
-  
-  terrain = new Terrain(tile_length, strips_length, strips_width, strips_num);
-  
-  setupShader();
-  
-  setColorScheme(colorScheme);
-  
+  terrain        = new Terrain(tile_length, strips_length, strips_width, strips_num);
   terrain.startTerrain();
-  details = new TerrainDetails();
-  dunes = new Dunes();
-  skybox = createSkybox();
+  details        = new TerrainDetails();
+  dunes          = new Dunes();
+  skybox         = createSkybox();
+  splashScreen   = new SplashScreen(terrain);
   
-  splashScreen = new SplashScreen(terrain);
-  if (splashScreenOn) terrain.dividing_space = 6;
-  fadeOutScreen = createShape(BOX, 500);
-  fadeOutScreen.setFill(color(0, 0));
-  fadeOutScreen.setStroke(true);
+  // Shader
+  ((PGraphicsOpenGL)g).pgl.enable(PGL.CULL_FACE);
+  setupShader();
 }
 
 
 void draw() {
   
+  //println("framerate: " + frameRate);
   if (fadingOut) transition();
   
   if (splashScreenOn) {
     cameraToOrigin();
-    terrain.setColorScheme(color(255), color(255));
-    terrain.road.visible = false;
+    
     splashScreen.display();
     splashScreen.update();
+    
     pushMatrix();
     cameraCenter();
     translate(tile_length*strips_width/2, 500, 0);
     terrain.display();
+    popMatrix();
     
-    if (moving) cameraOffsetZ+=tile_length;
-  
-    if (recordAudioPermission) terrain.addMusicStrip(ma.analyze());
-    else if (cameraOffsetZ%(strips_length*tile_length)<1) terrain.addStrip();
-    popMatrix();
     shape(fadeOutScreen);
 
-    return;
+  } else {
+    
+    if (shaderEnabled) shader(fogShader);
+  
+    rotateY(PI);
+    
+    background(skyboxColor);
+    if (skyboxEnabled) shape(skybox);
+    
+    dunes.update();
+    dunes.display();
+    
+    cameraToOrigin();
+    if (displayFadeOutScreen) {
+      pushMatrix();
+      translate(-1000, -50, -700);
+      shape(fadeOutScreen);
+      popMatrix();
+    }
+    cameraCenter();
+    
+    // move the curve of the road according to a sine wave
+    curveValue += sin(frameCount/20.0)*.2; 
+    
+    terrain.display();
+    details.update();
+    details.display();
+  
+    cycleColorScheme();
   }
-  
-  if (shaderEnabled) shader(fogShader);
-  
-  rotateY(PI);
-  
-  println("framerate: " + frameRate);
-  
-  background(skyboxColor);
-  if (skyboxEnabled) shape(skybox);
-  
-  dunes.update();
-  dunes.display();
-  
-  cameraToOrigin();
-  if (displayFadeOutScreen) {
-    pushMatrix();
-    translate(-1000, -50, -700);
-    shape(fadeOutScreen);
-    popMatrix();
-  }
-  cameraCenter();
-  
-  // move the curve of the road according to a sine wave
-  curveValue += sin(frameCount/20.0)*.2; 
-  
-  terrain.display();
-  details.update();
-  details.display();
 
-  cycleColorScheme();
-  
   if (moving) cameraOffsetZ+=tile_length;
   
   if (recordAudioPermission) terrain.addMusicStrip(ma.analyze());
   else if (cameraOffsetZ%(strips_length*tile_length)<1) terrain.addStrip();
   
-  
-  
   if (recording && (frameCount%5)==0) saveFrame("line-######.png");
 }
 
-
+// at the end of splash screen, this function is used to have a gradual transition between one scene to another
 void transition(){
+
   float timeDiff = millis() - fadingOutStart; 
+  
+  // first part: it makes fadeOutScreen (a box in front of the camera) go darker and darker until it's black
   if (timeDiff < fadingOutDuration*.25){
     fadeOutScreen.setFill(color(0, map(timeDiff, 0, fadingOutDuration*.25, 0, 300)));
     fogShader.set("fogMaxDistance", 0.0);
     fogShader.set("fogColor", 0.0, 0.0, 0.0);
     fogShader.set("fogLimit", 50000);
     
+  // second part: it makes the fog gradually disappear in order to reveal the scene underneath
   } else if (timeDiff < fadingOutDuration) {
     splashScreenOn = false;
     terrain.road.visible = true;
     terrain.dividing_space = 1;
-    //fadeOutScreen.setFill(color(0, map(timeDiff, fadingOutDuration/2, fadingOutDuration, 300, 0)));
     
     float thisFogDistance = map(timeDiff, fadingOutDuration*.25, fadingOutDuration, 0, fogDistance);
     
@@ -190,38 +178,12 @@ void transition(){
     fogShader.set("fogLimit", thisFogDistance + 50000 - map(timeDiff, fadingOutDuration*.25, fadingOutDuration, 0, 50000 - 200));
     color thisCurFogColor = lerpColor(color(0, 0, 0), curFogColor, map(timeDiff, fadingOutDuration*.25, fadingOutDuration, 0, 1));
     fogShader.set("fogColor", red(thisCurFogColor)/255.0, green(thisCurFogColor)/255.0, blue(thisCurFogColor)/255.0);
+    
+  // end: fadingOut boolean is used to figure out if this function needs to be called or not.
   } else fadingOut = false;
 }
 
-
-// function used to change the colors
-// 0 --> day, 1 --> night
-void setColorScheme(int colorScheme){
-  
-  color terrainColorA, terrainColorB;
-  
-  if (colorScheme == 0){
-    
-    terrainColorA = color(204, 102, 0);
-    terrainColorB = color(173, 152, 122);
-    
-    fogShader.set("fogColor", 225/255.0, 211/255.0, 190/255.0);
-    fogShader.set("lightingEnabled", false);
-    
-  } else {
-    
-    terrainColorA = color(#185768);
-    terrainColorB = color(#308096);
-    
-    fogShader.set("fogColor", 50.0/255, 93.0/255, 102.0/255);
-    fogShader.set("lightingEnabled", true);
-    
-  }
-  
-  terrain.setColorScheme(terrainColorA, terrainColorB);
-}
-
-
+// transition between day, dusk, night, dawn
 void cycleColorScheme(){
   
   float cycleDuration = 40000;
@@ -456,6 +418,71 @@ long getMemorySize() {
     e.printStackTrace();
   }
   return freeSize;
+}
+
+
+// transition between day, dusk, night, dawn
+void fixOfCycleColorSchemeThatStillNeedsToBeFinished(){
+  
+  int numSteps = 4;
+  float cycleDuration = 40000;
+  float transitionDuration = 1000;
+  float stepDuration = cycleDuration/numSteps - transitionDuration;
+  float [] timePeriods = new float[numSteps*2 - 1];
+  
+  for (int i=0; i<numSteps*2-1; i++){  
+    if (i%2==0) timePeriods[i] = (i/2+1)*stepDuration + (i/2)*transitionDuration; 
+    else timePeriods[i] = ((i+1)/2)*stepDuration + ((i+1)/2)*transitionDuration;
+  }
+ 
+                //terrainColorA      //terrainColorB          //skybox            //dunesFirstRow       //dunesSecondRow      //fog
+  color[] t0 = {color(204, 102, 0),   color(173, 152, 122),   color(#7EB583),     color(225, 211, 190), color(222, 232, 223), color(225, 211, 190)}; // day
+  color[] t1 = {color(#354356),       color(#916D6F),         color(#BCC4C4),     color(#C97642),       color(#FFC576),       color(#C97642)};       // dusk
+  color[] t2 = {color(#185768),       color(#4090A6),         color(30, 53, 70),  color(#325d66),       color(222, 232, 223), color(#325d66)};       // night
+  color[] t3 = {color(#4D2E36),       color(#6A3B43),         color(#FFE3BC),     color(#6A4954),       color(#BC846D),       color(#6A4954)};       // dawn
+  
+  color[][] timeColors = {t0, t1, t2, t3};
+  
+  float cur_time = millis() % cycleDuration;
+  int this_step = 0;
+  for (int i=0; i<timePeriods.length; i++){
+    if (cur_time < timePeriods[i + 1] && cur_time > timePeriods[i]) this_step = i;
+  }
+  
+  println(this_step);
+  
+  if (this_step%2!=0){
+    
+    terrain.setColorScheme(timeColors[this_step/2][0], timeColors[this_step/2][1]);
+    skybox.setFill(timeColors[this_step/2][2]);
+    dunes.setColorScheme(timeColors[this_step/2][3], timeColors[this_step/2][4]);
+    curFogColor = timeColors[this_step/2][5];
+    fogShader.set("fogColor", red(curFogColor)/255.0, green(curFogColor)/255.0, blue(curFogColor)/255.0);
+    
+  } else {
+    
+    float percentageCompleted = 0;
+    percentageCompleted = (cur_time%transitionDuration)/transitionDuration;
+    println(cur_time);
+    println(cur_time%transitionDuration);
+    println(percentageCompleted);
+    
+    println(" ");
+    
+    color A = lerpColor(timeColors[this_step/2][0], timeColors[((this_step/2)+1)%4][0], percentageCompleted);
+    color B = lerpColor(timeColors[this_step/2][1], timeColors[((this_step/2)+1)%4][1], percentageCompleted);
+    terrain.setColorScheme(A, B);
+    
+    color skyboxColor = lerpColor(timeColors[this_step/2][2], timeColors[((this_step/2)+1)%4][2], percentageCompleted);
+    skybox.setFill(skyboxColor);
+    
+    A = lerpColor(timeColors[this_step/2][3], timeColors[((this_step/2)+1)%4][3], percentageCompleted);
+    B = lerpColor(timeColors[this_step/2][4], timeColors[((this_step/2)+1)%4][4], percentageCompleted);
+    dunes.setColorScheme(A, B);
+    
+    curFogColor = lerpColor(timeColors[this_step/2][5], timeColors[((this_step/2)+1)%4][5], percentageCompleted);
+    fogShader.set("fogColor", red(curFogColor)/255.0, green(curFogColor)/255.0, blue(curFogColor)/255.0); 
+  }
 }
 
 

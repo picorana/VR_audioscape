@@ -20,6 +20,16 @@ class SplashScreen{
     loadingIconPosition = new PVector(0, 0, -150);
     loadingImage = loadImage("loadingImage.png");
     loadingIcon.setTexture(loadingImage);
+    
+    if (splashScreenOn) {
+      terrain.dividing_space = 6;
+      terrain.setColorScheme(color(255), color(255));
+      terrain.road.visible = false;
+    }
+    
+    fadeOutScreen = createShape(BOX, 500);
+    fadeOutScreen.setFill(color(0, 0));
+    fadeOutScreen.setStroke(true);
   }
   
   

@@ -2,7 +2,6 @@ class Terrain{
   
   ArrayList<PShape> strips = new ArrayList();
   ArrayList<PVector> prevVerts = new ArrayList();
-  ArrayList<Blade> grass = new ArrayList();
 
   // Terrain size data
   int tile_length;
@@ -56,15 +55,6 @@ class Terrain{
     
     // display the road
     road.display();
-
-    if (grassEnabled){
-      for (int i=0; i<grass.size(); i++){
-        pushMatrix();
-        translate(0, 0, grass.get(i).anchor.z + strips_num*tile_length);
-        grass.get(i).display();
-        popMatrix();
-      }
-    }
 
   }
   
@@ -159,9 +149,6 @@ class Terrain{
       prev_y1 = y1;
       prev_y2 = y2;
       
-      if (grassEnabled){
-        addGrass(y2, i);
-      }
 
     }
     
@@ -233,17 +220,6 @@ class Terrain{
     return s;
   }
   
-  
-  void addGrass(float vert_height, int index){
-    if (vert_height>-50 && random(0, 1)<.1 && (index<strips_width/2 +curveValue -5 || index> strips_width/2 +curveValue + 5)) {
-      grass.add(new Blade(new PVector(index*tile_length, vert_height - 5, strip_index*tile_length), 5));
-      if (random(0, 1) < .1){
-        for (int j=0; j<3; j++){
-          grass.add(new Blade(new PVector(index*tile_length, vert_height - 5, (strip_index + random(-.1, .1))*tile_length), 5));
-        }
-      }
-    }
-  }
   
   void recalculateNormals(){
     /* ---
