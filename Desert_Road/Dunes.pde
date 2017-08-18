@@ -14,12 +14,12 @@ class Dunes{
   PShape dunesFirstRow;
   PShape dunesSecondRow;
   
-  public Dunes(){
+  public Dunes() {
     
-    if (colorScheme == 0){
+    if (colorScheme == 0) {
       c1 = color(225, 211, 190);
       c2 = color(222, 232, 223);
-    } else if (colorScheme == 1){
+    } else if (colorScheme == 1) {
       c1 = color(#325d66);
       c2 = color(222, 232, 223);
     }
@@ -31,12 +31,12 @@ class Dunes{
     dunesSecondRow.translate(0, -200, 0);
   }
   
-  void display(){
+  void display() {
     shape(dunesFirstRow);
     shape(dunesSecondRow);
   }
   
-  void update(){
+  void update() {
     dunesFirstRow.rotateY(cos(millis()/2000)*.005);
     dunesSecondRow.rotateY(sin(millis()/2000)*.005);
     dunesFirstRow.translate(0, sin(millis()/2000)*2, 0);
@@ -44,12 +44,12 @@ class Dunes{
   }
   
   
-  void setColorScheme(color c1, color c2){
+  void setColorScheme(color c1, color c2) {
     dunesFirstRow.setFill(c1);
     dunesSecondRow.setFill(c2);
   }  
   
-  PShape createMountain(color c1, int mountainHeight, float scaleValue, float distance){
+  PShape createMountain(color c1, int mountainHeight, float scaleValue, float distance) {
     float halfHeight = 30*scaleValue;
     float sides = 180;
     float r = distance;

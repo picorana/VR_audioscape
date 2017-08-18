@@ -4,7 +4,7 @@ class RoundCactus implements Cactus{
   PShape cactus;
   float creationTime;
   
-  public RoundCactus(PVector position){
+  public RoundCactus(PVector position) {
     this.position = position;
     targetPosition = position.copy();
     
@@ -13,7 +13,7 @@ class RoundCactus implements Cactus{
     cactus.scale(0.7);
   }
   
-  void display(){
+  void display() {
     pushMatrix();
     translate(1800 + position.x, - 50 + position.y, 9000 + position.z);
     rotateX(-HALF_PI);
@@ -21,19 +21,19 @@ class RoundCactus implements Cactus{
     popMatrix();
   }
   
-  void update(){
-    if (millis()-creationTime <= 800 && fallingItems){
+  void update() {
+    if (millis()-creationTime <= 800 && fallingItems) {
       float cur_time = abs(millis()-creationTime);
       position.y = (targetPosition.y - 0.003125*pow(cur_time - 800, 2));
     } else position.y = targetPosition.y;
   }
   
-  boolean removable(){
+  boolean removable() {
     if (abs(position.z - cameraOffsetZ) >=6000) return true;
     else return false;
   }
   
-  PShape createCactus(){
+  PShape createCactus() {
     
     PShape g = createShape(GROUP);
     g.addChild(createHemisphere(g));
@@ -41,7 +41,7 @@ class RoundCactus implements Cactus{
     return g;
   }
   
-  PShape createHemisphere(PShape group){
+  PShape createHemisphere(PShape group) {
   float radius = random(20, 80.0);
   float tallness = random(1, 4);
   float rho = radius;
@@ -68,7 +68,7 @@ class RoundCactus implements Cactus{
         if (theta%.6<.3) {
           rho = radius + 5;
           s.fill(color(yellow_r_component, yellow_g_component, yellow_b_component));
-          /*if (random(0, 1)<.5){
+          /*if (random(0, 1)<.5) {
             sphereDetail(1);
             PShape r = createShape(SPHERE, 3);
             r.setFill(color(150, 150, 150));

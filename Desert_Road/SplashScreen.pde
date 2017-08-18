@@ -11,7 +11,7 @@ class SplashScreen{
   float countingTimestamp = 0;
   
   
-  public SplashScreen(Terrain t){
+  public SplashScreen(Terrain t) {
     this.t = t;
     img = loadImage("splashtexture.png");
     s = createCylinder(20, 1000, 1000);
@@ -33,7 +33,7 @@ class SplashScreen{
   }
   
   
-  void display(){
+  void display() {
     background(0);
     shape(s);
     pushMatrix();
@@ -43,19 +43,19 @@ class SplashScreen{
   }
   
   
-  void startSketch(){   
+  void startSketch() {   
     splashScreenOn = false;
   }
   
   
-  PShape createLoadingIcon(){
+  PShape createLoadingIcon() {
     PShape s = createShape(BOX, 30);
     s.setFill(color(255, 255, 255));
     return s;
   }
   
   
-  PShape createCylinder(int sides, float r, float h){
+  PShape createCylinder(int sides, float r, float h) {
     PShape s = createShape();
     float angle = 360 / sides;
     float halfHeight = h / 2;
@@ -77,12 +77,12 @@ class SplashScreen{
   }
   
   
-  void update(){
+  void update() {
     boolean looking = lookingAtButton();
-    if (counting){
+    if (counting) {
       if (!looking) counting = false;
-      else if (looking && millis()-countingTimestamp > 3000){
-        if (!fadingOut){
+      else if (looking && millis()-countingTimestamp > 3000) {
+        if (!fadingOut) {
           fadingOut = true;
           fadingOutStart = millis();
           loadingIcon.tint(255 - (millis()-fadingOutStart) );
@@ -91,7 +91,7 @@ class SplashScreen{
         loadingIcon.rotateZ((millis()-countingTimestamp)/100000.0);
       }
     } else {
-      if (looking){
+      if (looking) {
         countingTimestamp = millis();
         counting = true;
       } else counting = false;
@@ -99,7 +99,7 @@ class SplashScreen{
   }
   
   
-  boolean lookingAtButton(){
+  boolean lookingAtButton() {
     PVector tmpPVector = loadingIconPosition.copy().normalize();
     float distanceX = abs(tmpPVector.x - ((PGraphicsVR)g).forwardX);
     float distanceY = abs(tmpPVector.y - ((PGraphicsVR)g).forwardY);

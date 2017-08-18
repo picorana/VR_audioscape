@@ -91,7 +91,7 @@ float Clouds(vec3 dir, out float dist)
 }
 
 
-vec3 Ray(vec2 uv){
+vec3 Ray(vec2 uv) {
     vec3 dir = normalize(vec3(uv, 2.5));
     Rotate(dir.yz, iMouse.y * -0.004);
     Rotate(dir.xz, iMouse.x * -0.008);
@@ -99,7 +99,7 @@ vec3 Ray(vec2 uv){
 }
 
 
-vec3 Sky(vec3 dir){
+vec3 Sky(vec3 dir) {
     
     vec3 sun_direction = normalize(vec3(-1.0, -0.4, -1.0));
     
@@ -143,7 +143,7 @@ vec3 Sky(vec3 dir){
 }
 
 
-void mainImage( out vec4 fragColor, in vec2 fragCoord ){
+void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
 	vec2 uv = fragCoord.xy / iResolution.xy * 2.0 - 1.0;
     uv.x *= (iResolution.x) / iResolution.y;
     
@@ -165,6 +165,6 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 	fragColor = vec4(cl, 1.0);
 }
 
-void main(){
+void main() {
     mainImage(gl_FragColor,gl_FragCoord.xy);
 }

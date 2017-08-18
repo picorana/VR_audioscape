@@ -71,12 +71,12 @@ float fadingOutStart = 0;
 float fadingOutDuration = 5000;
 
 
-void settings(){
+void settings() {
   fullScreen(STEREO);
 }
 
 
-void setup(){ 
+void setup() { 
   requestPermission("android.permission.RECORD_AUDIO", "permissionCallback"); 
   sketchPApplet = this;
   
@@ -154,12 +154,12 @@ void draw() {
 }
 
 // at the end of splash screen, this function is used to have a gradual transition between one scene to another
-void transition(){
+void transition() {
 
   float timeDiff = millis() - fadingOutStart; 
   
   // first part: it makes fadeOutScreen (a box in front of the camera) go darker and darker until it's black
-  if (timeDiff < fadingOutDuration*.25){
+  if (timeDiff < fadingOutDuration*.25) {
     fadeOutScreen.setFill(color(0, map(timeDiff, 0, fadingOutDuration*.25, 0, 300)));
     fogShader.set("fogMaxDistance", 0.0);
     fogShader.set("fogColor", 0.0, 0.0, 0.0);
@@ -184,7 +184,7 @@ void transition(){
 }
 
 // transition between day, dusk, night, dawn
-void cycleColorScheme(){
+void cycleColorScheme() {
   
   float cycleDuration = 40000;
   float transitionDuration = 1000;
@@ -271,7 +271,7 @@ void cycleColorScheme(){
     
     isDusk = true;
     
-  } else if (cur_time > timePeriods[2] && cur_time <= timePeriods[3]){
+  } else if (cur_time > timePeriods[2] && cur_time <= timePeriods[3]) {
     // TRANSITION DUSK TO NIGHT
     color A = lerpColor(terrainColorDuskA, terrainColorNightA, (cur_time - timePeriods[2])/transitionDuration);
     color B = lerpColor(terrainColorDuskB, terrainColorNightB, (cur_time - timePeriods[2])/transitionDuration);
@@ -300,7 +300,7 @@ void cycleColorScheme(){
     
     isNight = true;
     
-  } else if (cur_time > timePeriods[4] && cur_time <= timePeriods[5]){
+  } else if (cur_time > timePeriods[4] && cur_time <= timePeriods[5]) {
     // TRANSITION NIGHT TO DAWN
     color A = lerpColor(terrainColorNightA, terrainColorDawnA, (cur_time - timePeriods[4])/transitionDuration);
     color B = lerpColor(terrainColorNightB, terrainColorDawnB, (cur_time - timePeriods[4])/transitionDuration);
@@ -328,7 +328,7 @@ void cycleColorScheme(){
     
     isDawn = true;
     
-  } else if (cur_time > timePeriods[6]){
+  } else if (cur_time > timePeriods[6]) {
     // TRANSITION DAWN TO DAY
     color A = lerpColor(terrainColorDawnA, terrainColorDayA, (cur_time - timePeriods[6])/transitionDuration);
     color B = lerpColor(terrainColorDawnB, terrainColorDayB, (cur_time - timePeriods[6])/transitionDuration);
@@ -350,7 +350,7 @@ void cycleColorScheme(){
 }
 
 
-PShape createSkybox(){
+PShape createSkybox() {
   PShape p = createShape(BOX, 10000);
   PShape s = createShape();
 
@@ -358,7 +358,7 @@ PShape createSkybox(){
   s.noStroke();
   s.translate(0, -200);
   
-  for (int i=0; i<p.getVertexCount(); i++){
+  for (int i=0; i<p.getVertexCount(); i++) {
     PVector v = p.getVertex(i);
     if (v.y<100) s.fill(color(#7EB583));
     else s.fill(color(255, 255, 255));
@@ -371,17 +371,17 @@ PShape createSkybox(){
 }
 
 
-void mouseClicked(){
+void mouseClicked() {
   save("screenshot.png");
 }
 
 
-void keyPressed(){
-  if (key == 'c'){
+void keyPressed() {
+  if (key == 'c') {
     if (recording == false) recording = true;
     else recording = false;
   } 
-  if (key == 'v'){
+  if (key == 'v') {
     if (shaderEnabled) shaderEnabled = false;
     else shaderEnabled = true;
   }
@@ -389,14 +389,14 @@ void keyPressed(){
 
 
 // sets the camera to terrain center
-void cameraCenter(){
+void cameraCenter() {
   //cameraToOrigin();
   translate(- tile_length*strips_width, 500, -cameraOffsetZ - strips_num*tile_length*1.5 - 100);
 }
 
 
 // sets the camera position to [0, 0, 0]
-void cameraToOrigin(){
+void cameraToOrigin() {
   translate(((PGraphicsOpenGL)sketchPApplet.g).cameraX, ((PGraphicsOpenGL)sketchPApplet.g).cameraY, ((PGraphicsOpenGL)sketchPApplet.g).cameraZ);
 }
 
@@ -422,7 +422,7 @@ long getMemorySize() {
 
 
 // transition between day, dusk, night, dawn
-void fixOfCycleColorSchemeThatStillNeedsToBeFinished(){
+void fixOfCycleColorSchemeThatStillNeedsToBeFinished() {
   
   int numSteps = 4;
   float cycleDuration = 40000;
@@ -430,7 +430,7 @@ void fixOfCycleColorSchemeThatStillNeedsToBeFinished(){
   float stepDuration = cycleDuration/numSteps - transitionDuration;
   float [] timePeriods = new float[numSteps*2 - 1];
   
-  for (int i=0; i<numSteps*2-1; i++){  
+  for (int i=0; i<numSteps*2-1; i++) {  
     if (i%2==0) timePeriods[i] = (i/2+1)*stepDuration + (i/2)*transitionDuration; 
     else timePeriods[i] = ((i+1)/2)*stepDuration + ((i+1)/2)*transitionDuration;
   }
@@ -445,13 +445,13 @@ void fixOfCycleColorSchemeThatStillNeedsToBeFinished(){
   
   float cur_time = millis() % cycleDuration;
   int this_step = 0;
-  for (int i=0; i<timePeriods.length; i++){
+  for (int i=0; i<timePeriods.length; i++) {
     if (cur_time < timePeriods[i + 1] && cur_time > timePeriods[i]) this_step = i;
   }
   
   println(this_step);
   
-  if (this_step%2!=0){
+  if (this_step%2!=0) {
     
     terrain.setColorScheme(timeColors[this_step/2][0], timeColors[this_step/2][1]);
     skybox.setFill(timeColors[this_step/2][2]);
@@ -486,17 +486,17 @@ void fixOfCycleColorSchemeThatStillNeedsToBeFinished(){
 }
 
 
-void permissionCallback(boolean granted){
-  if (granted){
+void permissionCallback(boolean granted) {
+  if (granted) {
     ma = new MusicAnalyzer();
     recordAudioPermission = true;
   }
 }
 
-void loadCactiMeshes(){
+void loadCactiMeshes() {
   cactiMeshes = new ArrayList();
   PShape s;
-  for (int i=1; i<4; i++){
+  for (int i=1; i<4; i++) {
     if (i==1) s = loadShape("cactus.obj");
     else s = loadShape("cactus" + i + ".obj");
     s.scale(50);
@@ -505,7 +505,7 @@ void loadCactiMeshes(){
   }
 }
 
-void setupShader(){
+void setupShader() {
   fogShader = loadShader("fogfrag.glsl", "fogvert.glsl");
   fogDistance = min(10000, tile_length*strips_num)/2 + 200;
   /*fogShader.set("fogMinDistance", fogDistance - 600);

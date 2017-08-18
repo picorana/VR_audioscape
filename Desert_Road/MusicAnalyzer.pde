@@ -73,7 +73,7 @@ class MusicAnalyzer{
   
   Visualizer mVisualizer;
   
-  MusicAnalyzer(){
+  MusicAnalyzer() {
     init();
     
     for (int i = 0; i < beatBands; i += 1) {
@@ -91,12 +91,12 @@ class MusicAnalyzer{
     toDraw = new float[beatBands];
   }
   
-  float[] analyze(){
+  float[] analyze() {
     if (mBytesFFT!=null) doTheMagic();
     return toDraw;
   }
   
-  void init(){
+  void init() {
     println("Visualizer init");
     mVisualizer = new Visualizer(0);
     mVisualizer.setEnabled(false);
@@ -117,7 +117,7 @@ class MusicAnalyzer{
     mVisualizer.setEnabled(true);
   }
   
-  float[] doTheMagic(){
+  float[] doTheMagic() {
     if (shortPosition >= shortTermAverageSamples) shortPosition = 0;    //Resets incremental variables
     if (longPosition >= longTermAverageSamples/shortTermAverageSamples) longPosition = 0;
     if (deltaPosition >= deltaArraySamples) deltaPosition = 0;
@@ -175,7 +175,7 @@ class MusicAnalyzer{
       map(constrain(count[i], 30, 200), 30, 200, 0, .75);
       
    
-      if (cyclePerBeatIntensity/standardDeviation > 3.5){
+      if (cyclePerBeatIntensity/standardDeviation > 3.5) {
         predictiveInfluence = predictiveInfluenceConstant * (1 - cos((float(beatCounter)*TWO_PI)/float(cyclesPerBeat)));
         predictiveInfluence *= map(constrain(cyclePerBeatIntensity/standardDeviation,3.5,20),3.5,15,1,6);
         if (cyclesPerBeat > 10) c[i] = c[i] + predictiveInfluence;

@@ -13,7 +13,7 @@ class FlatLeafCactus implements Cactus{
   
   PShape cactus;
   
-  public FlatLeafCactus(PVector position){
+  public FlatLeafCactus(PVector position) {
     this.position = position;
     targetPosition = position.copy();
     creationTime = millis();
@@ -22,7 +22,7 @@ class FlatLeafCactus implements Cactus{
     cactus.scale(0.7);
   }
   
-  void display(){
+  void display() {
     pushMatrix();
     translate(1800 + position.x, -50 + position.y, 9000 + position.z);
     rotateX(PI);
@@ -30,27 +30,27 @@ class FlatLeafCactus implements Cactus{
     popMatrix();
   }
   
-  void update(){
-    if (millis()-creationTime <= 800 && fallingItems){
+  void update() {
+    if (millis()-creationTime <= 800 && fallingItems) {
       float cur_time = abs(millis()-creationTime);
       position.y = (targetPosition.y - 0.003125*pow(cur_time - 800, 2));
       //println(position.y + " " + targetPosition.y);
     } else position.y = targetPosition.y;
   }
   
-  boolean removable(){
+  boolean removable() {
     if (abs(position.z - cameraOffsetZ) >=6000) return true;
     else return false;
   }
   
-  PShape createCactus(){
+  PShape createCactus() {
     PShape cactus = createShape(GROUP);
-    for (int i=0; i<leaf_number; i++){
+    for (int i=0; i<leaf_number; i++) {
       PShape leaf = createLeaf(new PVector(random(-10, 10), 0), (int)random(10, 25), (int)random(0, 100));
       leaf.rotateY(PI/2*i);
       cactus.addChild(leaf);
     }
-    for (int i=0; i<leaf_number*2; i++){
+    for (int i=0; i<leaf_number*2; i++) {
       PShape leaf = createLeaf(new PVector(10 + random(-10, 10), 0), (int)random(5, 8), (int)random(0, 100));
       leaf.rotateY(PI/4*i + 2);
       cactus.addChild(leaf);
@@ -58,7 +58,7 @@ class FlatLeafCactus implements Cactus{
     return cactus;
   }
   
-  PShape createCurve(PVector origin, int leaf_length){
+  PShape createCurve(PVector origin, int leaf_length) {
     PShape s = createShape();
     s.beginShape();    
     s.noStroke();
@@ -71,7 +71,7 @@ class FlatLeafCactus implements Cactus{
     return s;
   }
   
-  PShape createLeaf(PVector origin, int leaf_length, int random_seed){
+  PShape createLeaf(PVector origin, int leaf_length, int random_seed) {
     PShape leaf = createShape();
     int leaf_height = leaf_step_size * leaf_length;
     PShape curve = createCurve(origin, leaf_height);
@@ -83,7 +83,7 @@ class FlatLeafCactus implements Cactus{
     
     leaf.vertex(origin.x, 0);
     
-    for (int i=0; i<leaf_length; i++){
+    for (int i=0; i<leaf_length; i++) {
       float t = i/float(leaf_length);
       float point_x = curvePoint(curve.getVertex(0).x, curve.getVertex(1).x, curve.getVertex(2).x, curve.getVertex(3).x, t);
       float point_y = curvePoint(curve.getVertex(0).y, curve.getVertex(1).y, curve.getVertex(2).y, curve.getVertex(3).y, t);
@@ -96,7 +96,7 @@ class FlatLeafCactus implements Cactus{
     leaf.vertex(curvePoint(curve.getVertex(0).x, curve.getVertex(1).x, curve.getVertex(2).x, curve.getVertex(3).x, 1),  
         curvePoint(curve.getVertex(0).y, curve.getVertex(1).y, curve.getVertex(2).y, curve.getVertex(3).y, 1));
     
-    for (int i=leaf_length; i>0; i--){
+    for (int i=leaf_length; i>0; i--) {
       float t = i/float(leaf_length);
       float point_x = curvePoint(curve.getVertex(0).x, curve.getVertex(1).x, curve.getVertex(2).x, curve.getVertex(3).x, t);
       float point_y = curvePoint(curve.getVertex(0).y, curve.getVertex(1).y, curve.getVertex(2).y, curve.getVertex(3).y, t);

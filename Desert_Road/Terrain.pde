@@ -30,7 +30,7 @@ class Terrain{
   
   float dividing_space = 1;
   
-  public Terrain(int tile_length, int strips_length, int strips_width, int strips_num){
+  public Terrain(int tile_length, int strips_length, int strips_width, int strips_num) {
     this.tile_length = tile_length; 
     this.strips_length = strips_length; 
     this.strips_width = strips_width; 
@@ -40,9 +40,9 @@ class Terrain{
   }
   
   
-  void display(){
+  void display() {
     // display the terrain strips
-    for (int i=0; i<strips.size(); i++){
+    for (int i=0; i<strips.size(); i++) {
       pushMatrix();
       translate(0, 0, (tile_length)*i + strip_index*(tile_length));
       
@@ -59,18 +59,18 @@ class Terrain{
   }
   
   
-  void startTerrain(){
+  void startTerrain() {
     // first strip is flat
     strips.add(createFlatStrip());
     // build following strips
-    for (int i=1; i<strips_num; i++){
+    for (int i=1; i<strips_num; i++) {
       curveValue += sin(float(strip_index-strips_num/2)*.125);
       addStrip();
     }
   }
   
   
-  void addStrip(){
+  void addStrip() {
     strips.add(createStrip());
     road.update();
     strip_index++;
@@ -83,10 +83,10 @@ class Terrain{
   
   
   // the first strip of the road is a flat strip
-  PShape createFlatStrip(){
+  PShape createFlatStrip() {
     colorMode(RGB, 255);
     PShape s = createShape(GROUP);
-    for (int i=0; i<strips_width; i++){
+    for (int i=0; i<strips_width; i++) {
       
       PShape r = createShape();
       r.beginShape();
@@ -111,13 +111,13 @@ class Terrain{
   }
   
   
-  PShape createStrip(){
+  PShape createStrip() {
     colorMode(RGB, 255);
     
     ArrayList<PVector> tmpVerts = new ArrayList();
     
     PShape s = createShape(GROUP);
-    for (int i=0; i<strips_width; i++){
+    for (int i=0; i<strips_width; i++) {
       
       PShape r = createShape();
       r.beginShape();
@@ -160,7 +160,7 @@ class Terrain{
   }
   
   
-  void addMusicStrip(float[] mBytes){
+  void addMusicStrip(float[] mBytes) {
     strips.add(createMusicStrip(mBytes));
     road.update();
     strip_index++;
@@ -171,13 +171,13 @@ class Terrain{
     }
   }
   
-  PShape createMusicStrip(float[] mBytes){
+  PShape createMusicStrip(float[] mBytes) {
     colorMode(RGB, 255);
     
     ArrayList<PVector> tmpVerts = new ArrayList();
     
     PShape s = createShape(GROUP);
-    for (int i=0; i<strips_width; i++){
+    for (int i=0; i<strips_width; i++) {
       
       PShape r = createShape();
       r.beginShape();
@@ -221,7 +221,7 @@ class Terrain{
   }
   
   
-  void recalculateNormals(){
+  void recalculateNormals() {
     /* ---
         +--+--+--+
         |f0|f1|f2|
@@ -237,7 +237,7 @@ class Terrain{
     if (strips.size()==1) return;
     PShape s0 = strips.get(strips.size()-1);
     PShape s1 = strips.get(strips.size()-2);
-    for (int i=1; i<strips_width-1; i++){
+    for (int i=1; i<strips_width-1; i++) {
       PShape f0 = s0.getChild(i-1);
       PVector f0Normal = PVector.sub(f0.getVertex(1), f0.getVertex(0)).cross(PVector.sub(f0.getVertex(2), f0.getVertex(0)));
       PShape f1 = s0.getChild(i);
@@ -259,15 +259,15 @@ class Terrain{
     }
   }
   
-  void setColorScheme(color color_A, color color_B){
+  void setColorScheme(color color_A, color color_B) {
     to = color_A;
     from = color_B;
   }
   
-  void displayNormals(PShape strip){
-    for (int j=0; j<strips_width; j++){
-      for (int k=0; k<4; k++){
-        if (true /*j%3==0 && strips.indexOf(strip)%3==0*/){
+  void displayNormals(PShape strip) {
+    for (int j=0; j<strips_width; j++) {
+      for (int k=0; k<4; k++) {
+        if (true /*j%3==0 && strips.indexOf(strip)%3==0*/) {
           if (k==0) stroke(255, 0, 0);
           if (k==1) stroke(0, 255, 0);
           if (k==2) stroke(0, 0, 255);

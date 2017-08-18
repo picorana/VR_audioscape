@@ -13,15 +13,15 @@ class Road{
   int strip_index = 0;
   
   
-  public Road(int strips_width, int road_width){
+  public Road(int strips_width, int road_width) {
     this.strips_width = strips_width;
     this.road_width = road_width;
   }
   
   
-  void display(){
+  void display() {
     if (!visible) return;
-    for (int i=0; i<road.size(); i++){
+    for (int i=0; i<road.size(); i++) {
       pushMatrix();
       translate(0, 0, (tile_length)*i + strip_index*(tile_length));
       shape(road.get(i));
@@ -30,7 +30,7 @@ class Road{
   }
   
   // adds a road strip. 
-  void update(){
+  void update() {
     road.add(createRoadStrip());
     strip_index++;
     if (road.size()>strips_num) { // remove a part of the road if it went too far behind us
@@ -40,7 +40,7 @@ class Road{
   }
   
   // creates the actual pshape of a part of the road
-  PShape createRoadStrip(){  
+  PShape createRoadStrip() {  
     
     PShape g = createShape(GROUP);
     
@@ -61,7 +61,7 @@ class Road{
     float line_width = 0.2;
     
     // line 1
-    if (frameCount%10<5){
+    if (frameCount%10<5) {
       s = createShape();
       s.beginShape();
       s.noStroke();

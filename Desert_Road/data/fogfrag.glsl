@@ -29,7 +29,7 @@ void main() {
 
     float fogFactor = smoothstep(fogMinDistance, fogMaxDistance, depth);
 
-    if (lightingEnabled){
+    if (lightingEnabled) {
 
         vec4 diffuse = vertColor;
 
