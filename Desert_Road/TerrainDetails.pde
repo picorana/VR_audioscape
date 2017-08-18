@@ -1,31 +1,31 @@
 class TerrainDetails{
-  
+
   ArrayList items;
   ArrayList<Cactus> cacti;
-  
+
   public TerrainDetails() {
     cacti = new ArrayList();
   }
-  
+
   void display() {
     for (int i=0; i<cacti.size(); i++) {
       cacti.get(i).display();
     }
   }
-  
+
   void update() {
     for (int i=0; i<cacti.size(); i++) {
       cacti.get(i).update();
       if (cacti.get(i).removable()) cacti.remove(i);
     }
   }
-  
-  
+
+
   void addCactus(PVector position) {
     addCactus(position, (int) random(0, 3));
   }
-  
-  
+
+
   void addCactus(PVector position, int type) {
     switch(type) {
       case 0: cacti.add(new RoundCactus(position)); break;
