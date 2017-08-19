@@ -85,7 +85,8 @@ class SplashScreen {
         if (!fadingOut) {
           fadingOut = true;
           fadingOutStart = millis();
-          loadingIcon.tint(255 - (millis()-fadingOutStart) );
+          // XXX: tint() can only be called between beginShape() and endShape()
+          //loadingIcon.tint(255 - (millis()-fadingOutStart) );
         }
       } else {
         loadingIcon.rotateZ((millis()-countingTimestamp)/100000.0);
