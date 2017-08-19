@@ -1,4 +1,4 @@
-class Terrain{
+class Terrain {
 
   ArrayList<PShape> strips = new ArrayList();
   ArrayList<PVector> prevVerts = new ArrayList();

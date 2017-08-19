@@ -1,4 +1,4 @@
-class Road{
+class Road {
 
   ArrayList <PVector> roadBorders = new ArrayList(); // used to keep track of previous vertices
   ArrayList <PShape> road = new ArrayList();

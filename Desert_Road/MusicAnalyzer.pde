@@ -1,4 +1,5 @@
-class MusicAnalyzer{
+class MusicAnalyzer {
+
   PFont font;
   FFT fft;
 

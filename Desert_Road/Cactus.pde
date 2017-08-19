@@ -1,4 +1,4 @@
-public interface Cactus{
+public interface Cactus {
 
   void display();
 

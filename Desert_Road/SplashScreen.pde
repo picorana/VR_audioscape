@@ -1,4 +1,4 @@
-class SplashScreen{
+class SplashScreen {
 
   PShape s;
   PShape loadingIcon;

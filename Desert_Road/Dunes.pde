@@ -1,4 +1,4 @@
-class Dunes{
+class Dunes {
 
   // looks like items at a distance >5000 from the camera aren't rendered
 

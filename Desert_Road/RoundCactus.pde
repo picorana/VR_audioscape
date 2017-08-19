@@ -1,4 +1,5 @@
-class RoundCactus implements Cactus{
+class RoundCactus implements Cactus {
+
   PVector position;
   PVector targetPosition;
   PShape cactus;

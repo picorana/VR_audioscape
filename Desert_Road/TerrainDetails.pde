@@ -1,4 +1,4 @@
-class TerrainDetails{
+class TerrainDetails {
 
   ArrayList items;
   ArrayList<Cactus> cacti;

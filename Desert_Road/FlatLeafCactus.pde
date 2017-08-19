@@ -1,4 +1,4 @@
-class FlatLeafCactus implements Cactus{
+class FlatLeafCactus implements Cactus {
 
   PVector position;
 

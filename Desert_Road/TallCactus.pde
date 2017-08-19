@@ -1,4 +1,5 @@
-class TallCactus implements Cactus{
+class TallCactus implements Cactus {
+
   PVector position;
   PVector targetPosition;
   PShape cactus;
