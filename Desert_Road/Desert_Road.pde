@@ -502,7 +502,7 @@ void loadCactiMeshes() {
   cactiMeshes = new ArrayList();
   PShape s;
   for (int i=1; i<4; i++) {
-    loadShape("cactus" + i + ".obj");
+    s = loadShape("cactus" + i + ".obj");
     s.scale(50);
     s.setFill(color(random(100, 150), 150, random(100, 150)));
     cactiMeshes.add(s);
