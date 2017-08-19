@@ -1,3 +1,6 @@
+// FFT class by Damien Di Fede <ddf@compartmental.net>
+// license: GPL
+
 public class FFT extends FourierTransform
 {
   /**

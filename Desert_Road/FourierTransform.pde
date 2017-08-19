@@ -1,6 +1,8 @@
+// FourierTransform class by Damien Di Fede <ddf@compartmental.net>
+// license: GPL
+
 public abstract class FourierTransform
 {
-
 
   protected static final int LINAVG = 1;
   protected static final int LOGAVG = 2;

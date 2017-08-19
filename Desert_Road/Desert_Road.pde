@@ -1,3 +1,8 @@
+/*
+ * Music visualization for Google Cardboard
+ * by @picorana as part of GSoC 2017
+ * latest version: http://github.com/picorana/VR_Demo_GSoC17
+ */
 
 /* TODO:
 *  figure out clearly the camera position when starting the app
