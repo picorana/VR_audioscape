@@ -1,6 +1,6 @@
-# Blender v2.76 (sub 0) OBJ File: 'cactus.blend'
+# Blender v2.76 (sub 0) OBJ File: 'cactus1.blend'
 # www.blender.org
-mtllib cactus.mtl
+mtllib cactus1.mtl
 o Cylinder
 v 0.032460 -1.101043 -0.405621
 v 0.032460 4.929586 -0.024514
