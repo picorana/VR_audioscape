@@ -24,28 +24,28 @@ void main() {
     vec3 vertLightDir = vec3(0, -0.5, 1);
 
     gl_FragColor = vertColor;
-    
+
     float depth = gl_FragCoord.z / gl_FragCoord.w;
 
     float fogFactor = smoothstep(fogMinDistance, fogMaxDistance, depth);
 
-    if (lightingEnabled){
+    if (lightingEnabled) {
 
         vec4 diffuse = vertColor;
 
         vec4 spec = vec4(0.0);
         vec4 specular = vec4(1);
-         
+
         // normalize both input vectors
         vec3 n = vertNormal;
         vec3 e = normalize(vec3(eye));
-     
+
         float intensity = max(dot(n,vertLightDir), 0.0);
         float shininess = 0.1;
-     
+
         // if the vertex is lit compute the specular color
         if (intensity > 0.0) {
-            vec3 h = normalize(vertLightDir + e);  
+            vec3 h = normalize(vertLightDir + e);
             float intSpec = max(dot(h,n), 0.0);
             spec = specular * pow(intSpec,shininess);
         }
@@ -53,8 +53,8 @@ void main() {
         gl_FragColor = max(intensity*diffuse + spec, ambient);
 
     }
-    
+
     if (depth<2400.0 && lightingEnabled) gl_FragColor = mix(gl_FragColor, vec4(fogColor, gl_FragColor.w), fogFactor);
     else if (depth<fogLimit) gl_FragColor = mix(gl_FragColor, vec4(fogColor, gl_FragColor.w), fogFactor);
 
-} 
+}

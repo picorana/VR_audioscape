@@ -1,6 +1,8 @@
+// FourierTransform class by Damien Di Fede <ddf@compartmental.net>
+// license: GPL
+
 public abstract class FourierTransform
 {
-
 
   protected static final int LINAVG = 1;
   protected static final int LOGAVG = 2;
@@ -22,7 +24,7 @@ public abstract class FourierTransform
    * Construct a FourierTransform that will analyze sample buffers that are
    * <code>ts</code> samples long and contain samples with a <code>sr</code>
    * sample rate.
-   * 
+   *
    * @param ts
    *          the length of the buffers that will be analyzed
    * @param sr
@@ -116,7 +118,7 @@ public abstract class FourierTransform
 
   /**
    * Sets the object to not compute averages.
-   * 
+   *
    */
   public void noAverages()
   {
@@ -128,7 +130,7 @@ public abstract class FourierTransform
    * Sets the number of averages used when computing the spectrum and spaces the
    * averages in a linear manner. In other words, each average band will be
    * <code>specSize() / numAvg</code> bands wide.
-   * 
+   *
    * @param numAvg
    *          how many averages to compute
    */
@@ -155,7 +157,7 @@ public abstract class FourierTransform
    * dividing the Nyquist frequency by two, and then the result of that by two,
    * and so on. This means that the actual bandwidth of the lowest octave may
    * not be exactly the value specified.
-   * 
+   *
    * @param minBandwidth
    *          the minimum bandwidth used for an octave
    * @param bandsPerOctave
@@ -178,17 +180,17 @@ public abstract class FourierTransform
    * Sets the window to use on the samples before taking the forward transform.
    * If an invalid window is asked for, an error will be reported and the
    * current window will not be changed.
-   * 
+   *
    * @param windowFunction
    */
 
- 
 
- 
+
+
 
   /**
    * Returns the length of the time domain signal expected by this transform.
-   * 
+   *
    * @return the length of the time domain signal expected by this transform
    */
   public int timeSize()
@@ -200,7 +202,7 @@ public abstract class FourierTransform
    * Returns the size of the spectrum created by this transform. In other words,
    * the number of frequency bands produced by this transform. This is typically
    * equal to <code>timeSize()/2 + 1</code>, see above for an explanation.
-   * 
+   *
    * @return the size of the spectrum
    */
   public int specSize()
@@ -210,7 +212,7 @@ public abstract class FourierTransform
 
   /**
    * Returns the amplitude of the requested frequency band.
-   * 
+   *
    * @param i
    *          the index of a frequency band
    * @return the amplitude of the requested frequency band
@@ -226,19 +228,19 @@ public abstract class FourierTransform
    * Returns the width of each frequency band in the spectrum (in Hz). It should
    * be noted that the bandwidth of the first and last frequency bands is half
    * as large as the value returned by this function.
-   * 
+   *
    * @return the width of each frequency band in Hz.
    */
   public float getBandWidth()
   {
     return bandWidth;
   }
-  
+
   /**
-   * Returns the bandwidth of the requested average band. Using this information 
-   * and the return value of getAverageCenterFrequency you can determine the 
+   * Returns the bandwidth of the requested average band. Using this information
+   * and the return value of getAverageCenterFrequency you can determine the
    * lower and upper frequency of any average band.
-   * 
+   *
    * @see #getAverageCenterFrequency(int)
    * @related getAverageCenterFrequency ( )
    */
@@ -249,7 +251,7 @@ public abstract class FourierTransform
       // an average represents a certain number of bands in the spectrum
       int avgWidth = (int) spectrum.length / averages.length;
       return avgWidth * getBandWidth();
-            
+
     }
     else if ( whichAverage == LOGAVG )
     {
@@ -269,10 +271,10 @@ public abstract class FourierTransform
       hiFreq = (sampleRate / 2) / (float) Math.pow(2, octaves - octave - 1);
       // each average band within the octave will be this big
       freqStep = (hiFreq - lowFreq) / avgPerOctave;
-      
+
       return freqStep;
     }
-      
+
     return 0;
   }
 
@@ -280,7 +282,7 @@ public abstract class FourierTransform
    * Sets the amplitude of the <code>i<sup>th</sup></code> frequency band to
    * <code>a</code>. You can use this to shape the spectrum before using
    * <code>inverse()</code>.
-   * 
+   *
    * @param i
    *          the frequency band to modify
    * @param a
@@ -292,7 +294,7 @@ public abstract class FourierTransform
    * Scales the amplitude of the <code>i<sup>th</sup></code> frequency band
    * by <code>s</code>. You can use this to shape the spectrum before using
    * <code>inverse()</code>.
-   * 
+   *
    * @param i
    *          the frequency band to modify
    * @param s
@@ -303,7 +305,7 @@ public abstract class FourierTransform
   /**
    * Returns the index of the frequency band that contains the requested
    * frequency.
-   * 
+   *
    * @param freq
    *          the frequency you want the index for (in Hz)
    * @return the index of the frequency band that contains freq
@@ -319,7 +321,7 @@ public abstract class FourierTransform
     int i = Math.round(timeSize * fraction);
     return i;
   }
-  
+
   /**
    * Returns the middle frequency of the i<sup>th</sup> band.
    * @param i
@@ -332,7 +334,7 @@ public abstract class FourierTransform
     //               so the center frequency is a quarter of the way.
     if ( i == 0 ) return bw * 0.25f;
     // special case: the width of the last bin is half that of the others.
-    if ( i == spectrum.length - 1 ) 
+    if ( i == spectrum.length - 1 )
     {
       float lastBinBeginFreq = (sampleRate / 2) - (bw / 2);
       float binHalfWidth = bw * 0.25f;
@@ -340,14 +342,14 @@ public abstract class FourierTransform
     }
     // the center frequency of the ith band is simply i*bw
     // because the first band is half the width of all others.
-    // treating it as if it wasn't offsets us to the middle 
+    // treating it as if it wasn't offsets us to the middle
     // of the band.
     return i*bw;
   }
-  
+
   /**
    * Returns the center frequency of the i<sup>th</sup> average band.
-   * 
+   *
    * @param i
    *     which average band you want the center frequency of.
    */
@@ -360,7 +362,7 @@ public abstract class FourierTransform
       // the "center" bin of the average, this is fudgy.
       int centerBinIndex = i*avgWidth + avgWidth/2;
       return indexToFreq(centerBinIndex);
-            
+
     }
     else if ( whichAverage == LOGAVG )
     {
@@ -387,14 +389,14 @@ public abstract class FourierTransform
       // the center of the band will be the low plus half the width
       return f + freqStep/2;
     }
-    
+
     return 0;
   }
-   
+
 
   /**
    * Gets the amplitude of the requested frequency in the spectrum.
-   * 
+   *
    * @param freq
    *          the frequency in Hz
    * @return the amplitude of the frequency in the spectrum
@@ -407,7 +409,7 @@ public abstract class FourierTransform
   /**
    * Sets the amplitude of the requested frequency in the spectrum to
    * <code>a</code>.
-   * 
+   *
    * @param freq
    *          the frequency in Hz
    * @param a
@@ -420,7 +422,7 @@ public abstract class FourierTransform
 
   /**
    * Scales the amplitude of the requested frequency by <code>a</code>.
-   * 
+   *
    * @param freq
    *          the frequency in Hz
    * @param s
@@ -433,7 +435,7 @@ public abstract class FourierTransform
 
   /**
    * Returns the number of averages currently being calculated.
-   * 
+   *
    * @return the length of the averages array
    */
   public int avgSize()
@@ -443,7 +445,7 @@ public abstract class FourierTransform
 
   /**
    * Gets the value of the <code>i<sup>th</sup></code> average.
-   * 
+   *
    * @param i
    *          the average you want the value of
    * @return the value of the requested average band
@@ -461,7 +463,7 @@ public abstract class FourierTransform
   /**
    * Calculate the average amplitude of the frequency band bounded by
    * <code>lowFreq</code> and <code>hiFreq</code>, inclusive.
-   * 
+   *
    * @param lowFreq
    *          the lower bound of the band
    * @param hiFreq
@@ -480,7 +482,7 @@ public abstract class FourierTransform
     avg /= (hiBound - lowBound + 1);
     return avg;
   }
-  
+
   /**
    * Get the Real part of the Complex representation of the spectrum.
    */
@@ -488,7 +490,7 @@ public abstract class FourierTransform
   {
     return real;
   }
-  
+
   /**
    * Get the Imaginary part of the Complex representation of the spectrum.
    */
@@ -496,26 +498,26 @@ public abstract class FourierTransform
   {
     return imag;
   }
-  
+
 
   /**
    * Performs a forward transform on <code>buffer</code>.
-   * 
+   *
    * @param buffer
    *          the buffer to analyze
    */
   public abstract void forward(float[] buffer);
-  
+
   /**
    * Performs a forward transform on values in <code>buffer</code>.
-   * 
+   *
    * @param buffer
    *          the buffer of samples
    * @param startAt
    *          the index to start at in the buffer. there must be at least timeSize() samples
    *          between the starting index and the end of the buffer. If there aren't, an
    *          error will be issued and the operation will not be performed.
-   *          
+   *
    */
   public void forward(float[] buffer, int startAt)
   {
@@ -523,7 +525,7 @@ public abstract class FourierTransform
     {
        return;
     }
-    
+
     // copy the section of samples we want to analyze
     float[] section = new float[timeSize];
     System.arraycopy(buffer, startAt, section, 0, section.length);
@@ -532,22 +534,22 @@ public abstract class FourierTransform
 
 
 
-  
+
   /**
    * Performs an inverse transform of the frequency spectrum and places the
    * result in <code>buffer</code>.
-   * 
+   *
    * @param buffer
    *          the buffer to place the result of the inverse transform in
    */
   public abstract void inverse(float[] buffer);
 
- 
+
 
   /**
    * Performs an inverse transform of the frequency spectrum represented by
    * freqReal and freqImag and places the result in buffer.
-   * 
+   *
    * @param freqReal
    *          the real part of the frequency spectrum
    * @param freqImag

@@ -1,3 +1,6 @@
+// FFT class by Damien Di Fede <ddf@compartmental.net>
+// license: GPL
+
 public class FFT extends FourierTransform
 {
   /**
@@ -5,7 +8,7 @@ public class FFT extends FourierTransform
    * <code>timeSize</code> long and have been recorded with a sample rate of
    * <code>sampleRate</code>. <code>timeSize</code> <em>must</em> be a
    * power of two. This will throw an exception if it is not.
-   * 
+   *
    * @param timeSize
    *          the length of the sample buffers you will be analyzing
    * @param sampleRate
@@ -35,11 +38,11 @@ public class FFT extends FourierTransform
      // Minim.error("Can't scale a frequency band by a negative value.");
       return;
     }
-    
+
     real[i] *= s;
     imag[i] *= s;
     spectrum[i] *= s;
-    
+
     if (i != 0 && i != timeSize / 2)
     {
       real[timeSize - i] = real[i];
@@ -124,19 +127,19 @@ public class FFT extends FourierTransform
     // fill the spectrum buffer with amplitudes
     fillSpectrum();
   }
-  
+
   @Override
   public void forward(float[] buffer, int startAt)
   {
     if ( buffer.length - startAt < timeSize )
     {
-   /*   Minim.error( "FourierTransform.forward: not enough samples in the buffer between " + 
+   /*   Minim.error( "FourierTransform.forward: not enough samples in the buffer between " +
                    startAt + " and " + buffer.length + " to perform a transform."
                  );
    */
-      return;  
+      return;
     }
-    
+
  //   windowFunction.apply( buffer, startAt, timeSize );
     bitReverseSamples(buffer, startAt);
     fft();
@@ -145,7 +148,7 @@ public class FFT extends FourierTransform
 
   /**
    * Performs a forward transform on the passed buffers.
-   * 
+   *
    * @param buffReal the real part of the time domain signal to transform
    * @param buffImag the imaginary part of the time domain signal to transform
    */

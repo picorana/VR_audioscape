@@ -19,7 +19,7 @@ const RGB _HorizonColor = RGB(0.80147, 0.80147, 0.80147) ;
 #define CLOUD_BIAS -0.1
 // additional fuzz
 #define PERLIN 0.05
-    
+
 
 float hash( float n ) { return fract(sin(n)*43758.5453123); }
 float noise( in vec2 x )
@@ -70,7 +70,7 @@ float Clouds(vec3 dir, out float dist)
     const float sky_height = 200.0;
     dist = -sky_height / dir.y;
     vec3 clouds_intersection = dir * dist;
-    
+
     float tw = 0.0;
     float clouds = 0.0;
     const float s = 1.0 / CLOUD_STEPS;
@@ -80,18 +80,18 @@ float Clouds(vec3 dir, out float dist)
         tw += 1.0 - i;
     }
     clouds /= tw;
-    
+
     #ifdef PERLIN
     float perlin = Perlin(clouds_intersection.xz * 0.1 + iGlobalTime/10.0);
     clouds = clouds - perlin * PERLIN;
     #endif
-    
+
     clouds = max(0.0, pow(clouds - 0.2, 2.0) * 6.0 + CLOUD_BIAS);
     return clouds;
 }
 
 
-vec3 Ray(vec2 uv){
+vec3 Ray(vec2 uv) {
     vec3 dir = normalize(vec3(uv, 2.5));
     Rotate(dir.yz, iMouse.y * -0.004);
     Rotate(dir.xz, iMouse.x * -0.008);
@@ -99,63 +99,63 @@ vec3 Ray(vec2 uv){
 }
 
 
-vec3 Sky(vec3 dir){
-    
+vec3 Sky(vec3 dir) {
+
     vec3 sun_direction = normalize(vec3(-1.0, -0.4, -1.0));
-    
-    
+
+
     vec3 cl = vec3(0.67128, 0.94118, 0.69204);
     // add gradient to atmosphere
     cl = mix(vec3(0.67128, 0.94118, 0.69204), cl, pow(dir.y, 0.45));
     // add sun to atmosphere
     float sun = pow(max(0.0, dot(dir, -sun_direction)), 600.0);
     cl = mix(cl, vec3(2.5, 1.8, 0.6), sun);
-    
-    
+
+
     // compute cloud layers
     float p;
     float clouds = Clouds(dir, p);
-    
+
     #ifdef APPROXIMATE_NORMAL
-    
+
     float dt = 0.025;
-    
+
     vec3 right = cross(vec3(0.0, 1.0, 0.0), dir);
     vec3 up = cross(right, dir);
-    
+
     float clouds_right = Clouds(normalize(dir + right * dt), p);
     float clouds_above = Clouds(normalize(dir - up * dt), p);
-    
+
     vec2 n = vec2(clouds_right - clouds, clouds - clouds_above) * 2.0;
     vec3 normal = normalize(n.x * right + n.y * up + dir);
-    
+
     // lighting
     float o = dot(normal, sun_direction) * 0.6 + 0.3;
     #else
     float o = dot(dir, sun_direction) * 0.6 + 0.3;
     #endif
     o = mix(1.0, o, clamp(clouds * 0.01, 0.0, 1.0));
-    
+
     // add clouds to atmosphere
     cl = mix(cl, vec3(o, o, o), clamp(clouds, 0.0, 1.0));
-    
+
     return cl;
 }
 
 
-void mainImage( out vec4 fragColor, in vec2 fragCoord ){
+void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
 	vec2 uv = fragCoord.xy / iResolution.xy * 2.0 - 1.0;
     uv.x *= (iResolution.x) / iResolution.y;
-    
-    
+
+
     vec3 dir = Ray(uv);
     float d = 2.0 / dir.y;
-     
-    
+
+
     vec3 sun_direction = normalize(vec3(-1.0, -0.4, -1.0));
-    
+
     vec3 cl = Sky(dir);
-    
+
     // render floor, fog
     if(dir.y < 0.0) { cl = vec3(1, 0.96957, 0.88235); }
     float p;
@@ -165,6 +165,6 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 	fragColor = vec4(cl, 1.0);
 }
 
-void main(){
+void main() {
     mainImage(gl_FragColor,gl_FragCoord.xy);
 }
