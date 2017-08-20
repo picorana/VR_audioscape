@@ -16,8 +16,8 @@ class SplashScreen {
     img = loadImage("splashtexture.png");
     s = createCylinder(20, 1000, 1000);
     loadingIcon = createLoadingIcon();
-    loadingIcon.scale(3, 3, 0.1);
-    loadingIconPosition = new PVector(0, 0, -150);
+    loadingIcon.scale(6, 6, 0.1);
+    loadingIconPosition = new PVector(0, 0, -400);
     loadingImage = loadImage("loadingImage.png");
     loadingIcon.setTexture(loadingImage);
 
@@ -27,7 +27,7 @@ class SplashScreen {
       terrain.road.visible = false;
     }
 
-    fadeOutScreen = createShape(BOX, 500);
+    fadeOutScreen = createShape(BOX, 350);
     fadeOutScreen.setFill(color(0, 0));
     fadeOutScreen.setStroke(true);
   }
