@@ -49,8 +49,6 @@ class RoundCactus implements Cactus {
   float factor = TWO_PI/20.0;
   float x, y, z;
 
-  int type = 0;
-
   float green_r_component = random(100, 150);
   float green_g_component = 150;
   float green_b_component = random(100, 150);

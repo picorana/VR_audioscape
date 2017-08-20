@@ -19,9 +19,9 @@ import android.media.audiofx.Visualizer;
 
 PApplet sketchPApplet;
 SplashScreen splashScreen;
-boolean splashScreenOn    = true;
-boolean recording         = false;
-boolean grassEnabled      = false;
+boolean splashScreenOn = true;
+boolean recording = false;
+boolean grassEnabled = false;
 int colorScheme = 0;
 
 // Shader data
@@ -32,10 +32,10 @@ boolean shaderEnabled = true;
 
 // Terrain data
 Terrain terrain;
-int strips_length   = 1;
-int tile_length     = 50;
-int strips_width    = 50;
-int strips_num      = 90;
+int strips_length = 1;
+int tile_length = 50;
+int strips_width = 50;
+int strips_num = 90;
 
 // Other details in the scene
 ArrayList<PShape> cactiMeshes;
@@ -45,13 +45,13 @@ Dunes dunes;
 
 // Skybox data
 PShape skybox;
-boolean skyboxEnabled   = true;
-color skyboxColor       = color(200, 200, 255);
+boolean skyboxEnabled = true;
+color skyboxColor = color(200, 200, 255);
 
 // Movement data
 boolean moving = true;
-float curveValue    = 0;
-int cameraOffsetZ   = 2;
+float curveValue = 0;
+int cameraOffsetZ = 2;
 
 // Memory management
 long freeMemory;
@@ -87,12 +87,12 @@ void setup() {
 
   // init everything
   loadCactiMeshes();
-  terrain        = new Terrain(tile_length, strips_length, strips_width, strips_num);
+  terrain = new Terrain(tile_length, strips_length, strips_width, strips_num);
   terrain.startTerrain();
-  details        = new TerrainDetails();
-  dunes          = new Dunes();
-  skybox         = createSkybox();
-  splashScreen   = new SplashScreen(terrain);
+  details = new TerrainDetails();
+  dunes = new Dunes();
+  skybox = createSkybox();
+  splashScreen = new SplashScreen(terrain);
 
   // Shader
   ((PGraphicsOpenGL)g).pgl.enable(PGL.CULL_FACE);
@@ -502,8 +502,7 @@ void loadCactiMeshes() {
   cactiMeshes = new ArrayList();
   PShape s;
   for (int i=1; i<4; i++) {
-    if (i==1) s = loadShape("cactus.obj");
-    else s = loadShape("cactus" + i + ".obj");
+    s = loadShape("cactus" + i + ".obj");
     s.scale(50);
     s.setFill(color(random(100, 150), 150, random(100, 150)));
     cactiMeshes.add(s);

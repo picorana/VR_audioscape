@@ -1,3 +1,5 @@
+// FFT Beat Detection for Processing by Corey H. Walsh <coreyhwalsh@gmail.com>
+
 class MusicAnalyzer {
 
   PFont font;
