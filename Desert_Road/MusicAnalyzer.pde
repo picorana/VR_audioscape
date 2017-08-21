@@ -1,3 +1,5 @@
+// FFT Beat Detection for Processing by Corey H. Walsh <coreyhwalsh@gmail.com>
+
 class MusicAnalyzer {
 
   PFont font;
@@ -211,15 +213,14 @@ class MusicAnalyzer {
      if (cyclesPerBeat > 10) c[0] = c[0] + .25*(1 - cos((float(beatCounter)*TWO_PI)/float(cyclesPerBeat)));
     //println(c[0]);
 
-    threshold = constrain(c[0]*totalBeat*.5 + map(constrain(totalGlobal, 0, 2), 0, 2, 4, 0),5,1000);
+    threshold = constrain(c[0]*totalBeat*.2 + map(constrain(totalGlobal, 0, 2), 0, 2, 4, 0), 5, 1000);
     //println(threshold);
 
 
     if (beat > threshold & beatCounter > 5) {
       //println(beatCounter);
       beatCounter = 0;
-      if (fallingItems) details.addCactus(new PVector(-curveValue*tile_length, 0, cameraOffsetZ - 600));
-      else details.addCactus(new PVector(-curveValue*tile_length, 0, cameraOffsetZ + 150));
+      details.addCactus(new PVector(random(-(tile_length*strips_width)*.5, tile_length*strips_width*.2), 0, cameraOffsetZ));
     }
     /////////////////////////////////////////////////////Calculate beat spreads///////////////////////////////////////////////////////////////////////////////////////////
 

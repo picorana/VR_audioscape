@@ -19,9 +19,9 @@ import android.media.audiofx.Visualizer;
 
 PApplet sketchPApplet;
 SplashScreen splashScreen;
-boolean splashScreenOn    = true;
-boolean recording         = false;
-boolean grassEnabled      = false;
+boolean splashScreenOn = true;
+boolean recording = false;
+boolean grassEnabled = false;
 int colorScheme = 0;
 
 // Shader data
@@ -32,10 +32,10 @@ boolean shaderEnabled = true;
 
 // Terrain data
 Terrain terrain;
-int strips_length   = 1;
-int tile_length     = 50;
-int strips_width    = 50;
-int strips_num      = 90;
+int strips_length = 1;
+int tile_length = 50;
+int strips_width = 50;
+int strips_num = 90;
 
 // Other details in the scene
 ArrayList<PShape> cactiMeshes;
@@ -45,13 +45,13 @@ Dunes dunes;
 
 // Skybox data
 PShape skybox;
-boolean skyboxEnabled   = true;
-color skyboxColor       = color(200, 200, 255);
+boolean skyboxEnabled = true;
+color skyboxColor = color(200, 200, 255);
 
 // Movement data
 boolean moving = true;
-float curveValue    = 0;
-int cameraOffsetZ   = 2;
+float curveValue = 2;
+int cameraOffsetZ = 2;
 
 // Memory management
 long freeMemory;
@@ -87,12 +87,12 @@ void setup() {
 
   // init everything
   loadCactiMeshes();
-  terrain        = new Terrain(tile_length, strips_length, strips_width, strips_num);
+  terrain = new Terrain(tile_length, strips_length, strips_width, strips_num);
   terrain.startTerrain();
-  details        = new TerrainDetails();
-  dunes          = new Dunes();
-  skybox         = createSkybox();
-  splashScreen   = new SplashScreen(terrain);
+  details = new TerrainDetails();
+  dunes = new Dunes();
+  skybox = createSkybox();
+  splashScreen = new SplashScreen(terrain);
 
   // Shader
   ((PGraphicsOpenGL)g).pgl.enable(PGL.CULL_FACE);
@@ -141,7 +141,7 @@ void draw() {
     cameraCenter();
 
     // move the curve of the road according to a sine wave
-    curveValue += sin(frameCount/20.0)*.2;
+    curveValue += (sin(frameCount/20.0))*.2;
 
     terrain.display();
     details.update();
@@ -178,9 +178,9 @@ void transition() {
 
     float thisFogDistance = map(timeDiff, fadingOutDuration*.25, fadingOutDuration, 0, fogDistance);
 
-    fogShader.set("fogMinDistance", thisFogDistance - 600);
+    fogShader.set("fogMinDistance", thisFogDistance - 1000);
     fogShader.set("fogMaxDistance", thisFogDistance);
-    fogShader.set("fogLimit", thisFogDistance + 50000 - map(timeDiff, fadingOutDuration*.25, fadingOutDuration, 0, 50000 - 200));
+    fogShader.set("fogLimit", thisFogDistance + 50000 - map(timeDiff, fadingOutDuration*.25, fadingOutDuration, 0, 50000 - 500));
     color thisCurFogColor = lerpColor(color(0, 0, 0), curFogColor, map(timeDiff, fadingOutDuration*.25, fadingOutDuration, 0, 1));
     fogShader.set("fogColor", red(thisCurFogColor)/255.0, green(thisCurFogColor)/255.0, blue(thisCurFogColor)/255.0);
 
@@ -395,8 +395,7 @@ void keyPressed() {
 
 // sets the camera to terrain center
 void cameraCenter() {
-  //cameraToOrigin();
-  translate(- tile_length*strips_width, 500, -cameraOffsetZ - strips_num*tile_length*1.5 - 100);
+  translate(- tile_length*strips_width, 400, -cameraOffsetZ - strips_num*tile_length*1.5 - 200);
 }
 
 
@@ -502,8 +501,7 @@ void loadCactiMeshes() {
   cactiMeshes = new ArrayList();
   PShape s;
   for (int i=1; i<4; i++) {
-    if (i==1) s = loadShape("cactus.obj");
-    else s = loadShape("cactus" + i + ".obj");
+    s = loadShape("cactus" + i + ".obj");
     s.scale(50);
     s.setFill(color(random(100, 150), 150, random(100, 150)));
     cactiMeshes.add(s);
@@ -512,10 +510,7 @@ void loadCactiMeshes() {
 
 void setupShader() {
   fogShader = loadShader("fogfrag.glsl", "fogvert.glsl");
-  fogDistance = min(10000, tile_length*strips_num)/2 + 200;
-  /*fogShader.set("fogMinDistance", fogDistance - 600);
-  fogShader.set("fogMaxDistance", fogDistance);
-  fogShader.set("fogLimit", fogDistance + 400);*/
+  fogDistance = min(10000, tile_length*strips_num)/2;
   fogShader.set("fogMaxDistance", 0.0);
   fogShader.set("fogColor", 0.0, 0.0, 0.0);
   fogShader.set("fogLimit", 50000);

@@ -1,5 +1,6 @@
 # Desert Road
-Google Summer of Code 2017 project - VR application built with processing-android.
+
+Google Summer of Code 2017 project - VR application built with [processing-android](https://github.com/processing/processing-android).
 
 <div align="center">
   <img src="doc/index4.gif">
@@ -11,11 +12,12 @@ It lets you travel through a procedural landscape generated according to music. 
 ## Download
 --> todo: insert download links from the play store
 
-## Compile from source
+## How to use it
 * Download Processing from https://processing.org/
+* Make sure you have *Android Mode* installed. If you don't, install it via selecting the *Add Mode...* from the menu in the upper-right corner of the PDE
 * Clone the repository on your pc
 * Open Desert_Road.pde with Processing
-* Connect your phone to your pc in usb debug mode
+* Connect your phone to your pc, [enable USB debugging](https://developer.android.com/studio/run/device.html#setting-up) on your phone
 * Use Processing IDE to compile the sketch on your phone 
 
 Requirements for compiling the sketch:
@@ -30,3 +32,4 @@ Thanks to [dasaki's adaptation of minim fft classes to make them work on Android
 ## Links:
 * [Google Summer of Code](https://summerofcode.withgoogle.com/)
 * [Processing for Android](http://android.processing.org/index.html)
+
