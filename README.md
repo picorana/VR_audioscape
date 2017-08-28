@@ -1,7 +1,7 @@
 <div align="center">
 <h1>VR Audioscape</h1>
 <a href='https://play.google.com/store/apps/details?id=com.picorana.vraudioscape&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' width=150 src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/></a>
-<div>Google Summer of Code 2017 project: VR application built with [processing-android](https://github.com/processing/processing-android).</div>
+<div>Google Summer of Code 2017 project: VR application built with <a href="https://github.com/processing/processing-android">processing-android</a>.</div>
 <p style="font-size:10px">made with ♥ by <a href="https://picorana.github.io">picorana</a></p>
 </div>
 
@@ -66,10 +66,19 @@ This app is a proof of concept, meant to test and show what can be made with pro
     - Discussed possible outcomes and details of the project with the mentors.
 * June 2017:
     - Made three possible sketches of how the app would be. The design attempts can be found in this repository, in the branch *old_sketches*. Each sketch examined a different approach at what could best fit the purpose of the project.
+    - The sketch we chose at the end of this design phase had a procedural, infinite terrain. I spent the rest of the month refining the terrain, created a road and some procedural cactus.
 * July 2017:
-    - Implemented reactivity to music.
+    - Implemented reactivity to music. The musical input is taken from Android's Visualizer API. Every sound played from the phone is caught, and then processed through FFT transform and beat detection.
+    - Made the terrain generation influenced by music. Now the dunes are based on volume and frequency of the music.
+    - Modeled some more cacti.
+    - Made the sky and
 * August 2017:
-    -
+    - Made an introductive start screen.
+    - Implemented day/night/cycle.
+    - Various bug fixes.
+    - Uploaded the app on the play store.
+
+<img src="docs/cacti.png">
 
 
 ## Acknowledgements
