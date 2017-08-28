@@ -4,14 +4,6 @@
  * latest version: http://github.com/picorana/VR_Demo_GSoC17
  */
 
-/* TODO:
-*  figure out clearly the camera position when starting the app
-*  change distance at which details are removed according to tile number and size
-*  color of the terrain could be managed slightly better
-*  position of cacti is unnecessarily changed twice when it spawns and when it is drawn
-*
-*/
-
 import java.util.*;
 import processing.vr.*;
 import android.media.MediaPlayer;
@@ -33,8 +25,8 @@ boolean shaderEnabled = true;
 // Terrain data
 Terrain terrain;
 int strips_length = 1;
-int tile_length = 50;
-int strips_width = 50;
+int tile_length = 60;
+int strips_width = 40;
 int strips_num = 90;
 
 // Other details in the scene
@@ -50,7 +42,7 @@ color skyboxColor = color(200, 200, 255);
 
 // Movement data
 boolean moving = true;
-float curveValue = 2;
+float curveValue = 1;
 int cameraOffsetZ = 2;
 
 // Memory management
@@ -180,7 +172,7 @@ void transition() {
 
     fogShader.set("fogMinDistance", thisFogDistance - 1000);
     fogShader.set("fogMaxDistance", thisFogDistance);
-    fogShader.set("fogLimit", thisFogDistance + 50000 - map(timeDiff, fadingOutDuration*.25, fadingOutDuration, 0, 50000 - 500));
+    fogShader.set("fogLimit", thisFogDistance + 50000 - map(timeDiff, fadingOutDuration*.25, fadingOutDuration, 0, 50000 - 600));
     color thisCurFogColor = lerpColor(color(0, 0, 0), curFogColor, map(timeDiff, fadingOutDuration*.25, fadingOutDuration, 0, 1));
     fogShader.set("fogColor", red(thisCurFogColor)/255.0, green(thisCurFogColor)/255.0, blue(thisCurFogColor)/255.0);
 
@@ -356,7 +348,7 @@ void cycleColorScheme() {
 
 
 PShape createSkybox() {
-  PShape p = createShape(BOX, 10000);
+  PShape p = createShape(BOX, 11000);
   PShape s = createShape();
 
   s.beginShape(QUADS);
@@ -370,7 +362,7 @@ PShape createSkybox() {
     s.vertex(v.x, v.y, v.z);
   }
 
-  s.scale(1, 0.8, 1);
+  //s.scale(1, 1, 1);
   s.endShape();
   return s;
 }
@@ -500,7 +492,7 @@ void permissionCallback(boolean granted) {
 void loadCactiMeshes() {
   cactiMeshes = new ArrayList();
   PShape s;
-  for (int i=1; i<4; i++) {
+  for (int i=1; i<6; i++) {
     s = loadShape("cactus" + i + ".obj");
     s.scale(50);
     s.setFill(color(random(100, 150), 150, random(100, 150)));
@@ -510,7 +502,7 @@ void loadCactiMeshes() {
 
 void setupShader() {
   fogShader = loadShader("fogfrag.glsl", "fogvert.glsl");
-  fogDistance = min(10000, tile_length*strips_num)/2;
+  fogDistance = min(10000, tile_length*strips_num)/2 - 100;
   fogShader.set("fogMaxDistance", 0.0);
   fogShader.set("fogColor", 0.0, 0.0, 0.0);
   fogShader.set("fogLimit", 50000);

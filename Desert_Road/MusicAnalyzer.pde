@@ -210,8 +210,8 @@ class MusicAnalyzer {
     /////////////////////////////////////////////////find global beat///////////////////////////////////////////////////////////////////////////////////////////////
     c[0] = 3.25 + map(constrain(beatCounter, 0, 5), 0, 5, 5, 0);
 
-     if (cyclesPerBeat > 10) c[0] = c[0] + .25*(1 - cos((float(beatCounter)*TWO_PI)/float(cyclesPerBeat)));
-    //println(c[0]);
+    if (cyclesPerBeat > 10) c[0] = c[0] + .25*(1 - cos((float(beatCounter)*TWO_PI)/float(cyclesPerBeat)));
+    //if (c[0]>4) println(c[0]);
 
     threshold = constrain(c[0]*totalBeat*.2 + map(constrain(totalGlobal, 0, 2), 0, 2, 4, 0), 5, 1000);
     //println(threshold);
@@ -219,8 +219,10 @@ class MusicAnalyzer {
 
     if (beat > threshold & beatCounter > 5) {
       //println(beatCounter);
+      println(beatPosition);
       beatCounter = 0;
-      details.addCactus(new PVector(random(-(tile_length*strips_width)*.5, tile_length*strips_width*.2), 0, cameraOffsetZ));
+      float xPosition = map(beatPosition, 0, beatAverageSamples, -(tile_length*strips_width)*.5, tile_length*strips_width*.2);
+      details.addCactus(new PVector(xPosition, 0, cameraOffsetZ + 1000));
     }
     /////////////////////////////////////////////////////Calculate beat spreads///////////////////////////////////////////////////////////////////////////////////////////
 

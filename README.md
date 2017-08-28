@@ -3,7 +3,7 @@
 Google Summer of Code 2017 project - VR application built with [processing-android](https://github.com/processing/processing-android).
 
 <div align="center">
-  <img src="doc/index4.gif">
+  <img src="docs/index4.gif">
 </div>
 
 Desert Road is a VR application made with Processing.

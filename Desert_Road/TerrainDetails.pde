@@ -22,7 +22,7 @@ class TerrainDetails {
 
 
   void addCactus(PVector position) {
-    addCactus(position, (int) random(0, 3));
+    addCactus(position, (int) random(0, cactiMeshes.size()));
   }
 
 

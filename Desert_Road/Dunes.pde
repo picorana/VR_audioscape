@@ -1,13 +1,11 @@
 class Dunes {
 
-  // looks like items at a distance >5000 from the camera aren't rendered
-
   int baseLength = 5000;
   int detail = 100;
   int numMountainsFirstRow = 1;
   int numMountainsSecondRow = 0;
   int mountainHeight = 100;
-  int distance = 3000;
+  int distance = 4000;
 
   color c1, c2;
 
@@ -25,10 +23,10 @@ class Dunes {
     }
 
     dunesFirstRow = createMountain(c1, mountainHeight, 1, distance);
-    dunesSecondRow = createMountain(c2, mountainHeight, 1, distance + 400);
+    dunesSecondRow = createMountain(c2, mountainHeight, 1, distance + 200);
     dunesFirstRow.translate(0, -100, 0);
-    dunesSecondRow.scale(1.1);
-    dunesSecondRow.translate(0, -200, 0);
+    dunesSecondRow.scale(1.3);
+    dunesSecondRow.translate(0, -1000, 0);
   }
 
   void display() {

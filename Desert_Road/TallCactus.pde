@@ -12,7 +12,7 @@ class TallCactus implements Cactus {
     creationTime = millis();
     cactus = cactiMeshes.get((int)random(0, cactiMeshes.size()));
 
-    //cactus.setFill(color(100, 150, 100));
+    cactus.setFill(color(random(50, 150), 150, random(50, 150)));
     //cactus.scale(50);
   }
 
